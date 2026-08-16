@@ -12,13 +12,27 @@ The setup AP is WPA2 rather than open. An open AP would mean the home WiFi
 password crosses the air in the clear to a device anyone in range can also
 join.
 
-Its passphrase is derived from the board's own unique ID rather than shipped
-as a default in this repository. A fixed default would be a shared credential
-published in a README — every beacon built from this source would have the
-same one, which is the property that makes such defaults worthless. Deriving
-it per board gives each device a distinct passphrase, puts no secret in
-version control, and `tools/deploy.py` prints the one belonging to the board
-in front of you. A `password` in `config.json` overrides it.
+Its passphrase is random, generated on the board at first use and kept in
+`setup.json`, which is never committed. Two weaker designs were tried and
+rejected:
+
+- A fixed default in `config.json` is a shared credential published in a
+  README. Every beacon built from this source would have the same one, which
+  is the property that makes such defaults worthless.
+- Deriving it from the RP2040's unique ID looks better and is not. The format
+  would be public, so the search space is only the ID's varying bytes — around
+  24 bits, which an attacker who captures the WPA2 handshake cracks offline in
+  seconds. That matters here more than it looks: the whole reason this network
+  is encrypted is that the owner's *home* WiFi password crosses it, and anyone
+  who recovers the passphrase can decrypt exactly that exchange.
+
+Twelve characters from a 31-symbol alphabet is about 59 bits, which is not
+crackable, and the characters that get misread on a phone screen — `0`/`O`,
+`1`/`l`/`i` — are left out.
+
+There is deliberately no fallback if the board cannot produce randomness. A
+predictable passphrase would be worse than no access point at all, so the
+failure is loud instead.
 
 Nothing is validated beyond "the fields are not empty". A typo'd password
 cannot be distinguished from a router that is temporarily down without trying
@@ -27,6 +41,7 @@ comes back to setup mode if the join fails. Retry is the validation.
 """
 
 import server as server_mod
+import store
 
 AP_ADDRESS = "192.168.4.1"
 
@@ -47,22 +62,48 @@ border:0;border-radius:9px;font-size:1rem;font-weight:600}
 """
 
 
-def default_password(unique_id=None):
-    """The setup network's passphrase for this particular board.
+PASSPHRASE_PATH = "setup.json"
+PASSPHRASE_LENGTH = 12
 
-    Nine characters, which clears WPA2's eight-character minimum, taken from
-    the last three bytes of the RP2040's factory-unique ID. Deterministic, so
-    it can be printed by the deploy tool and read off the board again later,
-    and different on every device.
+# No 0/O, 1/l/i — the characters people mistype off a screen at night.
+ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789"
+
+# 8 * 31 = 248. Bytes at or above this are discarded rather than folded, which
+# would make the first eight letters of the alphabet slightly likelier.
+_UNBIASED_LIMIT = 248
+
+
+def generate_passphrase(length=PASSPHRASE_LENGTH, source=None):
+    """A random passphrase. Raises if the platform has no randomness."""
+    if source is None:
+        import os
+
+        source = os.urandom
+    characters = []
+    while len(characters) < length:
+        for byte in source(length):
+            if byte < _UNBIASED_LIMIT:
+                characters.append(ALPHABET[byte % len(ALPHABET)])
+                if len(characters) == length:
+                    break
+    return "".join(characters)
+
+
+def ensure_passphrase(configured=None, path=PASSPHRASE_PATH):
+    """The setup network's passphrase: configured, remembered, or new.
+
+    Remembering it matters as much as generating it. If the board invented a
+    new passphrase on every boot, a power blip during setup would silently
+    change the network the owner is standing in front of with a phone.
     """
-    if unique_id is None:
-        try:
-            import machine
-
-            unique_id = machine.unique_id()
-        except Exception:
-            unique_id = b"\x00\x00\x00"
-    return "lw-" + "".join("%02x" % byte for byte in unique_id[-3:])
+    if configured:
+        return configured
+    stored = store.load(path)
+    if stored and stored.get("passphrase"):
+        return stored["passphrase"]
+    passphrase = generate_passphrase()
+    store.save(path, {"passphrase": passphrase})
+    return passphrase
 
 
 def scan_networks(station):
@@ -139,13 +180,21 @@ class Portal:
 
     def __init__(self, ssid="launch-window-setup", password=None, on_save=None):
         self.ssid = ssid
-        self.password = password or default_password()
+        # Resolved in start(): generating a passphrase is a side effect that
+        # writes to flash, and constructing a Portal should not do that.
+        self.password = password
         self.on_save = on_save
         self.access_point = None
         self.networks = []
 
     def start(self):
         import network
+
+        self.password = ensure_passphrase(self.password)
+        # Printed for anyone on the serial console; it is not shown on the
+        # setup page itself, where it would be visible to whoever already
+        # joined the network.
+        print("setup network %s, passphrase %s" % (self.ssid, self.password))
 
         # Scan from station mode first: a CYW43 in AP mode cannot survey the
         # band, and the list of networks is the whole point of the page.

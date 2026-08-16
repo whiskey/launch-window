@@ -174,10 +174,17 @@ r = portal.dns_response(q, bytes((192,168,4,1)))
 check('dns response', r is not None and r[:2] == b'\xab\xcd' and r.endswith(bytes((192,168,4,1))),
       '%d bytes' % (len(r) if r else 0))
 
+# -- randomness for the setup passphrase -------------------------------
+p1 = portal.generate_passphrase()
+p2 = portal.generate_passphrase()
+check('passphrase is random', p1 != p2 and len(p1) == 12,
+      '%d chars, two draws differ' % len(p1))
+check('passphrase alphabet', all(c in portal.ALPHABET for c in p1), p1[:3] + '...')
+
 # -- radio -------------------------------------------------------------
 import network
 ap = network.WLAN(network.AP_IF)
-ap.config(essid='launch-window-smoke', password=portal.default_password(), security=3)
+ap.config(essid='launch-window-smoke', password=portal.generate_passphrase(), security=3)
 ap.active(True)
 import time
 time.sleep(1)

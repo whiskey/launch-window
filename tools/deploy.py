@@ -26,7 +26,9 @@ the beacon is plugged in, with a phone.
 
 from __future__ import annotations
 
+import json
 import os
+import secrets
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +45,7 @@ import portal  # noqa: E402
 FIRMWARE = os.path.join(ROOT, "firmware")
 
 # Files the board owns. A deploy never writes or removes these.
-BOARD_OWNED = ("wifi.json", "cache.json")
+BOARD_OWNED = ("wifi.json", "cache.json", "setup.json")
 
 
 def files_to_push():
@@ -109,18 +111,23 @@ def main() -> int:
                 "import os\nprint('wifi.json' in os.listdir('/'))"
             ).strip()
             if existing != "True":
-                # The setup passphrase is derived from this board's chip ID, so
-                # the only place it can be read is the board itself.
-                unique_id = board.check(
-                    "import machine, ubinascii\n"
-                    "print(ubinascii.hexlify(machine.unique_id()).decode())"
-                ).strip()
+                # The setup passphrase is random and lives only on the board.
+                # If it has not been generated yet, generate it here so the
+                # deploy can print it — otherwise the owner would have to read
+                # it off the serial console before they could join.
+                try:
+                    passphrase = json.loads(board.get("setup.json"))["passphrase"]
+                except Exception:
+                    passphrase = portal.generate_passphrase(source=secrets.token_bytes)
+                    board.put(
+                        json.dumps({"passphrase": passphrase}).encode(), "setup.json"
+                    )
                 print(
                     "\nno wifi.json on the board — it starts its setup access point "
                     "on the next boot:"
                 )
                 print("  network:    launch-window-setup")
-                print("  passphrase: %s" % portal.default_password(bytes.fromhex(unique_id)))
+                print("  passphrase: %s" % passphrase)
                 print("  then open:  http://192.168.4.1/")
     finally:
         board.exit_raw()

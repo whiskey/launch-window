@@ -50,11 +50,15 @@ asks for it once, over a network of its own.
 1. **Plug it in.** With no credentials stored it starts an access point called
    **`launch-window-setup`** and the LED blinks steadily at 1 Hz.
 
-   Its passphrase is derived from the board's own chip ID — `lw-` followed by the last six hex
-   digits — so no shared default is published here and every board has a different one.
-   `tools/deploy.py` prints the passphrase for the board in front of you, and
-   `tools/pico.py run 'import machine,ubinascii; print(ubinascii.hexlify(machine.unique_id()))'`
-   recovers it later. Setting `setup_ap.password` in `firmware/config.json` overrides it.
+   Its passphrase is random — twelve characters, about 59 bits — generated once and kept in
+   `setup.json` on the board, which is never committed. **`tools/deploy.py` prints it**, and
+   `tools/pico.py get setup.json` recovers it later. Setting `setup_ap.password` in
+   `firmware/config.json` overrides it.
+
+   It has to be unguessable rather than merely unique, because the owner's home WiFi password
+   crosses this network: anyone who recovers the passphrase from a captured handshake can
+   decrypt exactly that exchange. A passphrase derived from the board's chip ID would look
+   fine and offer about 24 bits, which is seconds of offline work.
 2. **Join that network with a phone.** The setup page opens by itself — the beacon answers every
    DNS query with its own address, which is what makes the captive-portal sheet appear. If it
    does not, open `http://192.168.4.1`.

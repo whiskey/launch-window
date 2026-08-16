@@ -7,8 +7,12 @@ fails in the least debuggable way available, by making the phone declare the
 network broken and silently switch back to mobile data.
 """
 
+import collections
+import json
+import math
 import os
 import sys
+import tempfile
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -88,24 +92,69 @@ class TestDnsResponder(unittest.TestCase):
 
 
 class TestSetupPassphrase(unittest.TestCase):
-    """No shared default ships in the repository; each board derives its own."""
+    """It protects the owner's home WiFi password in transit, so it must be
+    random rather than derived from anything an attacker can enumerate."""
 
-    def test_derived_from_the_board_id(self):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.path = os.path.join(self.temp.name, "setup.json")
+
+    def test_length_and_alphabet(self):
+        passphrase = portal.generate_passphrase()
+        self.assertEqual(len(passphrase), 12)
+        self.assertTrue(all(c in portal.ALPHABET for c in passphrase))
+        self.assertGreaterEqual(len(passphrase), 8)  # WPA2 minimum
+
+    def test_ambiguous_characters_are_excluded(self):
+        """0/O and 1/l/i are the ones misread off a phone screen at night."""
+        for character in "01lIoO":
+            self.assertNotIn(character, portal.ALPHABET)
+
+    def test_draws_differ(self):
+        draws = {portal.generate_passphrase() for _ in range(50)}
+        self.assertEqual(len(draws), 50)
+
+    def test_entropy_is_not_brute_forceable(self):
+        """The rejected chip-ID scheme had 24 bits; this needs far more."""
+        bits = portal.PASSPHRASE_LENGTH * math.log2(len(portal.ALPHABET))
+        self.assertGreater(bits, 50)
+
+    def test_distribution_is_unbiased(self):
+        """Folding bytes with % would favour the first eight symbols."""
+        counts = collections.Counter(
+            "".join(portal.generate_passphrase(64) for _ in range(200))
+        )
+        self.assertEqual(len(counts), len(portal.ALPHABET))
+        self.assertLess(max(counts.values()) / min(counts.values()), 1.5)
+
+    def test_no_randomness_raises_rather_than_falling_back(self):
+        """A predictable passphrase would be worse than no access point."""
+
+        def broken(length):
+            raise OSError("no entropy source")
+
+        with self.assertRaises(OSError):
+            portal.generate_passphrase(source=broken)
+
+    def test_passphrase_is_remembered_across_boots(self):
+        """A power blip must not change the network someone is standing at."""
+        first = portal.ensure_passphrase(path=self.path)
+        second = portal.ensure_passphrase(path=self.path)
+        self.assertEqual(first, second)
+        with open(self.path) as handle:
+            self.assertEqual(json.load(handle)["passphrase"], first)
+
+    def test_configured_passphrase_wins_and_is_not_persisted(self):
         self.assertEqual(
-            portal.default_password(bytes.fromhex("e661410403783230")), "lw-783230"
+            portal.ensure_passphrase("chosen-by-hand", path=self.path), "chosen-by-hand"
         )
+        self.assertFalse(os.path.exists(self.path))
 
-    def test_meets_the_wpa2_minimum_length(self):
-        self.assertGreaterEqual(len(portal.default_password(b"\x00\x01\x02")), 8)
-
-    def test_differs_between_boards(self):
-        self.assertNotEqual(
-            portal.default_password(bytes.fromhex("e661410403783230")),
-            portal.default_password(bytes.fromhex("e6614104037899aa")),
-        )
-
-    def test_config_can_override_it(self):
-        self.assertEqual(portal.Portal(password="chosen-by-hand").password, "chosen-by-hand")
+    def test_constructing_a_portal_writes_nothing(self):
+        """Generating a passphrase touches flash; a constructor should not."""
+        instance = portal.Portal()
+        self.assertIsNone(instance.password)
 
 
 class FakeStation:

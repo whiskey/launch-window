@@ -1,6 +1,7 @@
 # Written on the board by the setup portal, never here.
 wifi.json
 cache.json
+setup.json
 
 __pycache__/
 *.pyc
