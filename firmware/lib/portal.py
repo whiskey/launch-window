@@ -10,8 +10,15 @@ for ninety seconds.
 
 The setup AP is WPA2 rather than open. An open AP would mean the home WiFi
 password crosses the air in the clear to a device anyone in range can also
-join. The default passphrase is in the README, is meant to be changed, and
-protects a network that only exists during setup.
+join.
+
+Its passphrase is derived from the board's own unique ID rather than shipped
+as a default in this repository. A fixed default would be a shared credential
+published in a README — every beacon built from this source would have the
+same one, which is the property that makes such defaults worthless. Deriving
+it per board gives each device a distinct passphrase, puts no secret in
+version control, and `tools/deploy.py` prints the one belonging to the board
+in front of you. A `password` in `config.json` overrides it.
 
 Nothing is validated beyond "the fields are not empty". A typo'd password
 cannot be distinguished from a router that is temporarily down without trying
@@ -38,6 +45,24 @@ border:0;border-radius:9px;font-size:1rem;font-weight:600}
 .note{margin-top:1.5rem;color:#75757e;font-size:.82rem}
 .rssi{color:#75757e;font-variant-numeric:tabular-nums}
 """
+
+
+def default_password(unique_id=None):
+    """The setup network's passphrase for this particular board.
+
+    Nine characters, which clears WPA2's eight-character minimum, taken from
+    the last three bytes of the RP2040's factory-unique ID. Deterministic, so
+    it can be printed by the deploy tool and read off the board again later,
+    and different on every device.
+    """
+    if unique_id is None:
+        try:
+            import machine
+
+            unique_id = machine.unique_id()
+        except Exception:
+            unique_id = b"\x00\x00\x00"
+    return "lw-" + "".join("%02x" % byte for byte in unique_id[-3:])
 
 
 def scan_networks(station):
@@ -112,9 +137,9 @@ def saved_page(ssid):
 class Portal:
     """Runs the AP, the DNS hijack and the setup form until credentials arrive."""
 
-    def __init__(self, ssid="launch-window-setup", password="firstlight", on_save=None):
+    def __init__(self, ssid="launch-window-setup", password=None, on_save=None):
         self.ssid = ssid
-        self.password = password
+        self.password = password or default_password()
         self.on_save = on_save
         self.access_point = None
         self.networks = []

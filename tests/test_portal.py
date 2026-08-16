@@ -87,6 +87,27 @@ class TestDnsResponder(unittest.TestCase):
             self.assertIsNone(portal.dns_response(query[:length], ADDRESS))
 
 
+class TestSetupPassphrase(unittest.TestCase):
+    """No shared default ships in the repository; each board derives its own."""
+
+    def test_derived_from_the_board_id(self):
+        self.assertEqual(
+            portal.default_password(bytes.fromhex("e661410403783230")), "lw-783230"
+        )
+
+    def test_meets_the_wpa2_minimum_length(self):
+        self.assertGreaterEqual(len(portal.default_password(b"\x00\x01\x02")), 8)
+
+    def test_differs_between_boards(self):
+        self.assertNotEqual(
+            portal.default_password(bytes.fromhex("e661410403783230")),
+            portal.default_password(bytes.fromhex("e6614104037899aa")),
+        )
+
+    def test_config_can_override_it(self):
+        self.assertEqual(portal.Portal(password="chosen-by-hand").password, "chosen-by-hand")
+
+
 class FakeStation:
     def __init__(self, results):
         self.results = results
