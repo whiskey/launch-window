@@ -1,0 +1,36 @@
+{
+  "hostname": "launch-window",
+  "refresh_minutes": 30,
+  "watchdog": true,
+  "ntp_host": "pool.ntp.org",
+  "country": "DE",
+
+  "site": {
+    "name": "Garden",
+    "latitude": 52.52,
+    "longitude": 13.4,
+    "timezone": {
+      "name": "Europe/Berlin",
+      "std_offset_min": 60,
+      "dst": "eu",
+      "abbrev": ["CET", "CEST"]
+    }
+  },
+
+  "setup_ap": {
+    "ssid": "launch-window-setup",
+    "passphrase_note": "null derives a per-board passphrase from the chip ID; tools/deploy.py prints it",
+    "password": null
+  },
+
+  "thresholds": {
+    "usable_score": 55,
+    "go_hours": 2.0,
+    "go_score": 70,
+    "marginal_hours": 1.0,
+    "gust_veto_kmh": 40.0,
+    "gust_free_kmh": 15.0,
+    "precip_veto_pct": 40.0,
+    "cloud_veto_pct": 90.0
+  }
+}
