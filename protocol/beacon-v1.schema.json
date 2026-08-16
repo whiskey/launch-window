@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/launch-window/protocol/beacon-v1.schema.json",
+  "title": "Launch window beacon status, version 1",
+  "description": "What the beacon publishes at /api/v1/beacon. Clients must ignore unknown fields; new fields may be added within version 1. Removing or retyping a field requires /api/v2.",
+  "type": "object",
+  "required": ["schema", "generated_at", "beacon", "clock", "site", "night", "moon", "verdict", "data"],
+  "properties": {
+    "schema": { "const": 1 },
+    "generated_at": {
+      "type": ["string", "null"],
+      "description": "Null until the clock has synchronised. A beacon that has never reached NTP must not date its own output."
+    },
+    "generated_local": { "type": ["string", "null"] },
+
+    "beacon": {
+      "type": "object",
+      "required": ["host", "firmware_version"],
+      "properties": {
+        "host": { "type": "string" },
+        "firmware_version": { "type": "string" },
+        "uptime_s": { "type": ["number", "null"], "minimum": 0 },
+        "uptime": { "type": ["string", "null"] },
+        "core_temp_c": {
+          "type": ["number", "null"],
+          "description": "RP2040 die temperature. A health signal, not weather — it reads several degrees above ambient."
+        },
+        "signal_dbm": { "type": ["number", "null"] },
+        "address": { "type": ["string", "null"] }
+      }
+    },
+
+    "clock": {
+      "type": "object",
+      "required": ["synced"],
+      "properties": {
+        "synced": {
+          "type": "boolean",
+          "description": "False means every timestamp in this document is unreliable: the RP2040 has no battery-backed clock and boots believing it is 2021."
+        },
+        "last_sync": { "type": ["string", "null"] }
+      }
+    },
+
+    "site": {
+      "type": "object",
+      "required": ["latitude", "longitude"],
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "timezone": { "type": ["string", "null"] }
+      }
+    },
+
+    "night": {
+      "type": "object",
+      "description": "Computed on the device from the clock alone, so it stays exact when the network is down. Any boundary the Sun does not reach is null — at 52 degrees north there is genuinely no astronomical night for weeks around midsummer.",
+      "required": ["dark_seconds"],
+      "properties": {
+        "darkness": {
+          "description": "Which definition of darkness the verdict was graded against.",
+          "enum": ["astronomical", "nautical", "none", null]
+        },
+        "sunset": { "type": ["string", "null"] },
+        "sunset_local": { "type": ["string", "null"] },
+        "dusk_astronomical": { "type": ["string", "null"] },
+        "dusk_astronomical_local": { "type": ["string", "null"] },
+        "dawn_astronomical": { "type": ["string", "null"] },
+        "dawn_astronomical_local": { "type": ["string", "null"] },
+        "sunrise": { "type": ["string", "null"] },
+        "sunrise_local": { "type": ["string", "null"] },
+        "dark_seconds": { "type": "number", "minimum": 0 },
+        "dark_duration": { "type": ["string", "null"] },
+        "dark_start": { "type": ["string", "null"] },
+        "dark_end": { "type": ["string", "null"] }
+      }
+    },
+
+    "moon": {
+      "type": "object",
+      "required": ["illumination", "phase"],
+      "properties": {
+        "illumination": { "type": "number", "minimum": 0, "maximum": 1 },
+        "phase": {
+          "enum": ["new", "waxing crescent", "first quarter", "waxing gibbous",
+                   "full", "waning gibbous", "last quarter", "waning crescent"]
+        },
+        "altitude_deg": { "type": ["number", "null"] },
+        "rise": { "type": ["string", "null"] },
+        "rise_local": { "type": ["string", "null"] },
+        "set": { "type": ["string", "null"] },
+        "set_local": { "type": ["string", "null"] },
+        "interferes": {
+          "type": "boolean",
+          "description": "True when the Moon is above the horizon during the dark window and bright enough to matter."
+        }
+      }
+    },
+
+    "verdict": {
+      "type": "object",
+      "required": ["state", "reasons", "hours"],
+      "properties": {
+        "state": {
+          "description": "unknown is not a bad night; it means the beacon has no forecast and is saying so.",
+          "enum": ["go", "marginal", "no-go", "unknown"]
+        },
+        "score": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Mean score across the dark hours. The verdict is decided by the best run, not by this."
+        },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "window": {
+          "type": ["object", "null"],
+          "description": "Null unless the recommendation is to go outside. A rejected stretch is described in reasons instead.",
+          "required": ["start", "end", "hours"],
+          "properties": {
+            "start": { "type": "string" },
+            "end": { "type": "string" },
+            "start_local": { "type": "string" },
+            "end_local": { "type": "string" },
+            "hours": { "type": "number", "minimum": 0 },
+            "mean_score": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "hours": {
+          "type": "array",
+          "description": "One entry per forecast hour overlapping the dark window, carrying both the grade and the values behind it.",
+          "items": {
+            "type": "object",
+            "required": ["ts", "score"],
+            "properties": {
+              "ts": { "type": "number" },
+              "time": { "type": ["string", "null"] },
+              "local": { "type": ["string", "null"] },
+              "score": {
+                "type": ["number", "null"],
+                "description": "Null when the hour could not be graded. Never a zero standing in for missing data."
+              },
+              "penalties": { "type": "object" },
+              "veto": { "type": ["string", "null"] },
+              "moon_alt_deg": { "type": ["number", "null"] },
+              "cloud_cover": { "type": ["number", "null"] },
+              "cloud_cover_high": { "type": ["number", "null"] },
+              "wind_gusts_10m": { "type": ["number", "null"] },
+              "temperature_2m": { "type": ["number", "null"] },
+              "dew_point_2m": { "type": ["number", "null"] },
+              "precipitation_probability": { "type": ["number", "null"] }
+            }
+          }
+        }
+      }
+    },
+
+    "data": {
+      "type": "object",
+      "required": ["source", "stale"],
+      "properties": {
+        "source": { "type": "string" },
+        "fetched_at": { "type": ["string", "null"] },
+        "age_s": { "type": ["number", "null"], "minimum": 0 },
+        "age": { "type": ["string", "null"] },
+        "stale": {
+          "type": "boolean",
+          "description": "True when the forecast is older than two hours or has never arrived. Clients must distinguish stale from current visibly."
+        },
+        "from_flash_cache": {
+          "type": "boolean",
+          "description": "True when the forecast was restored from flash after a reboot rather than fetched in this session."
+        },
+        "error": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
