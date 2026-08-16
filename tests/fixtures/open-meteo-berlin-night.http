@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+Date: Sun, 16 Aug 2026 20:20:17 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: close
+
+36c
+{"latitude":52.52,"longitude":13.4,"generationtime_ms":0.4756450653076172,"utc_offset_seconds":0,"timezone":"GMT","timezone_abbreviation":"GMT","elevation":30.0,"hourly_units":{"time":"unixtime","cloud_cover":"%","cloud_cover_low":"%","cloud_cover_mid":"%","cloud_cover_high":"%","temperature_2m":"°C","dew_point_2m":"°C","wind_gusts_10m":"km/h","precipitation_probability":"%"},"hourly":{"time":[1786906800,1786910400,1786914000,1786917600,1786921200,1786924800,1786928400,1786932000],"cloud_cover":[94,100,100,100,100,84,77,83],"cloud_cover_low":[0,0,0,0,0,0,4,3],"cloud_cover_mid":[16,45,94,100,86,84,74,28],"cloud_cover_high":[87,100,100,100,100,0,0,65],"temperature_2m":[22.1,21.7,21.1,20.3,19.9,19.4,19.0,18.4],"dew_point_2m":[12.1,12.8,13.3,13.6,12.7,13.2,13.9,14.7],"wind_gusts_10m":[7.9,5.4,7.6,10.4,7.9,5.8,8.3,10.4],"precipitation_probability":[0,0,0,0,0,0,0,0]}}
+0
+
