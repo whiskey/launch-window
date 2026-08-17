@@ -193,3 +193,23 @@ ever had. That is a thirty-second test, and it is step 2 above.
 | `protocol/` | The versioned JSON contract and its schema |
 | `tools/` | Deploy, simulate, smoke-test, verify, serial driver |
 | `tests/` | The host suite |
+
+## Licence, data and sources
+
+The code is GPL-3.0 — see [`LICENSE`](LICENSE). Copyright © 2026 Carsten Knoblich.
+
+The forecast comes from [Open-Meteo](https://open-meteo.com/) and this uses their **free tier
+under its own terms: non-commercial use, and fewer than 10 000 calls a day.** At the default
+half-hour refresh the beacon makes 48, so the interval can be shortened a long way before that
+matters — but it is a shared free service, and `refresh_minutes` is in `config.json` for a
+reason.
+
+Their data is licensed **CC-BY 4.0**, which means attribution travels with anything published
+from it, a screenshot of the status page included. No API key is involved, which is why none has
+to be kept out of this repository.
+
+The astronomy is implemented from published references, not ported from anyone's code: the solar
+position is the low-precision series given in the Astronomical Almanac, and the lunar terms are
+the truncated ELP series from Meeus, *Astronomical Algorithms*, chapter 47. `pyephem` appears
+only as a test-time reference to check that implementation against, and nothing that ships
+depends on it.
