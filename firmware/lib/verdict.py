@@ -23,9 +23,9 @@ and elongates every star in it. Below 15 km/h the effect is not visible, and by
 40 km/h nothing usable comes out, so that is a veto rather than a penalty.
 
 **Dew is graded from the spread between air temperature and dew point**, which
-is the quantity that actually predicts it. `docs/field-operation.md` in the
-astro repository records the local reality: damp nights near the dew point are
-the normal case in northern Germany, not the exception, and surfaces that
+is the quantity that actually predicts it. The field notes for the rig this was
+built for record the local reality: damp nights near the dew point are the
+normal case in northern Germany, not the exception, and surfaces that
 radiate to a clear sky settle *below* air temperature — so a spread of 1 K
 means the corrector plate is already dewing. It is a penalty and never a veto,
 because a dew heater is the answer and the observer owns one.

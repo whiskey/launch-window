@@ -6,9 +6,9 @@ What the beacon serves, and the rules it holds itself to. Machine-readable schem
 - Base path: `/api/v1`
 - Content type: `application/json; charset=utf-8`
 
-The conventions are lifted deliberately from the rig's own `status-v1`. A household with two
-status documents should not have to learn two sets of rules, and these three are the ones worth
-copying.
+The conventions are lifted deliberately from the status API of the rig controller this beacon
+was built alongside. A household running two status documents should not have to learn two sets
+of rules, and these three are the ones worth copying.
 
 ## Design rules
 
