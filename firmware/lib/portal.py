@@ -65,6 +65,18 @@ border:0;border-radius:9px;font-size:1rem;font-weight:600}
 PASSPHRASE_PATH = "setup.json"
 PASSPHRASE_LENGTH = 12
 
+# CYW43 authentication mode. `WLAN.config(security=...)` passes this value
+# straight to the driver on this port — it is a raw auth constant, not a small
+# enum index, and the interface accepts any integer without complaint.
+#
+# It has to be WPA2/AES specifically. A mixed or unrecognised mode negotiates a
+# TKIP *group* cipher, and while a client still associates over the CCMP
+# pairwise key, every broadcast frame is then undecodable: DHCP DISCOVER never
+# lands, the client falls back to a 169.254 address, and a phone sits on the
+# join spinner until it gives up. Setup mode looks broken in a way that reads
+# as a wrong passphrase.
+AUTH_WPA2_AES_PSK = 0x00400004
+
 # No 0/O, 1/l/i — the characters people mistype off a screen at night.
 ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789"
 
@@ -204,7 +216,9 @@ class Portal:
         station.active(False)
 
         self.access_point = network.WLAN(network.AP_IF)
-        self.access_point.config(essid=self.ssid, password=self.password, security=3)
+        self.access_point.config(
+            essid=self.ssid, password=self.password, security=AUTH_WPA2_AES_PSK
+        )
         self.access_point.active(True)
         return self.access_point
 

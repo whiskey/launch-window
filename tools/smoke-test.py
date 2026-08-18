@@ -184,7 +184,8 @@ check('passphrase alphabet', all(c in portal.ALPHABET for c in p1), p1[:3] + '..
 # -- radio -------------------------------------------------------------
 import network
 ap = network.WLAN(network.AP_IF)
-ap.config(essid='launch-window-smoke', password=portal.generate_passphrase(), security=3)
+ap.config(essid='launch-window-smoke', password=portal.generate_passphrase(),
+          security=portal.AUTH_WPA2_AES_PSK)
 ap.active(True)
 import time
 time.sleep(1)
