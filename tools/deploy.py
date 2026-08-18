@@ -5,7 +5,8 @@
     tools/deploy.py --all          push everything regardless of checksum
     tools/deploy.py --no-restart   push and leave the board at the REPL
     tools/deploy.py --wipe-wifi    also delete the saved credentials, so the
-                                   board comes back up in setup mode
+                                   board comes back up in setup mode, and print
+                                   how to join it
     tools/deploy.py --keep-docs    ship the docstrings too, so a traceback's
                                    line numbers match the files you are reading
 
@@ -18,10 +19,13 @@ Only files whose contents differ are written, because writing flash is the slow
 and failure-prone part of this loop: a re-deploy after editing one module takes
 about a second instead of fifteen.
 
-`wifi.json` and `cache.json` live only on the board and are never touched. The
-credentials are not in this repository and a deploy must not be able to destroy
-them by accident — that would turn every firmware tweak into a walk to wherever
-the beacon is plugged in, with a phone.
+`wifi.json`, `cache.json` and `setup.json` live only on the board: nothing in
+this repository is ever pushed over them. The credentials are not here and a
+deploy must not be able to destroy them by accident — that would turn every
+firmware tweak into a walk to wherever the beacon is plugged in, with a phone.
+The two deliberate exceptions are `--wipe-wifi`, which removes `wifi.json` on
+request, and `setup.json`, which is created — never overwritten — when the board
+has no setup passphrase yet, so that a deploy can print it.
 """
 
 from __future__ import annotations
@@ -44,9 +48,6 @@ import portal  # noqa: E402
 
 FIRMWARE = os.path.join(ROOT, "firmware")
 
-# Files the board owns. A deploy never writes or removes these.
-BOARD_OWNED = ("wifi.json", "cache.json", "setup.json")
-
 
 def files_to_push():
     """(local path, remote path) for everything the firmware needs."""
@@ -65,6 +66,38 @@ def payload(local: str, keep_docs: bool) -> bytes:
     if keep_docs or not local.endswith(".py"):
         return data
     return strip_docs.strip_bytes(data)
+
+
+def setup_ap() -> dict:
+    """The `setup_ap` block the board will boot with (see `main.py`)."""
+    with open(os.path.join(FIRMWARE, "config.json"), "rb") as handle:
+        return json.loads(handle.read()).get("setup_ap") or {}
+
+
+def announce_setup_mode(board, reason: str) -> None:
+    """Print how to join the setup access point, under the line `reason`.
+
+    The passphrase is random and lives only on the board, so read it back when
+    it is already there and generate it here when it is not — otherwise the
+    owner would have to read it off the serial console before they could join.
+    A passphrase configured in `config.json` wins, exactly as it does on the
+    board, and no `setup.json` is written for one.
+    """
+    access_point = setup_ap()
+    passphrase = access_point.get("password")
+    if not passphrase:
+        try:
+            passphrase = json.loads(board.get(portal.PASSPHRASE_PATH))["passphrase"]
+        except Exception:
+            passphrase = portal.generate_passphrase(source=secrets.token_bytes)
+            board.put(
+                json.dumps({"passphrase": passphrase}).encode(),
+                portal.PASSPHRASE_PATH,
+            )
+    print("\n%s" % reason)
+    print("  network:    %s" % access_point.get("ssid", "launch-window-setup"))
+    print("  passphrase: %s" % passphrase)
+    print("  then open:  http://192.168.4.1/")
 
 
 def main() -> int:
@@ -101,34 +134,27 @@ def main() -> int:
             )
         )
 
+        stored_wifi = (
+            board.check("import os\nprint('wifi.json' in os.listdir('/'))").strip()
+            == "True"
+        )
         if wipe_wifi:
-            board.check(
-                "import os\ntry:\n os.remove('wifi.json')\nexcept Exception: pass"
-            )
-            print("removed wifi.json — the board will come up in setup mode")
+            if stored_wifi:
+                # Deliberately unguarded: a remove that fails silently would be
+                # reported below as a board in setup mode that is not.
+                board.check("import os\nos.remove('wifi.json')")
+                reason = "removed wifi.json"
+            else:
+                reason = "there was no wifi.json to remove"
+            stored_wifi = False
         else:
-            existing = board.check(
-                "import os\nprint('wifi.json' in os.listdir('/'))"
-            ).strip()
-            if existing != "True":
-                # The setup passphrase is random and lives only on the board.
-                # If it has not been generated yet, generate it here so the
-                # deploy can print it — otherwise the owner would have to read
-                # it off the serial console before they could join.
-                try:
-                    passphrase = json.loads(board.get("setup.json"))["passphrase"]
-                except Exception:
-                    passphrase = portal.generate_passphrase(source=secrets.token_bytes)
-                    board.put(
-                        json.dumps({"passphrase": passphrase}).encode(), "setup.json"
-                    )
-                print(
-                    "\nno wifi.json on the board — it starts its setup access point "
-                    "on the next boot:"
-                )
-                print("  network:    launch-window-setup")
-                print("  passphrase: %s" % passphrase)
-                print("  then open:  http://192.168.4.1/")
+            reason = "no wifi.json on the board"
+
+        if not stored_wifi:
+            announce_setup_mode(
+                board,
+                "%s — it starts its setup access point on the next boot:" % reason,
+            )
     finally:
         board.exit_raw()
 
