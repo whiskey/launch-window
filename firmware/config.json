@@ -19,7 +19,7 @@
 
   "setup_ap": {
     "ssid": "launch-window-setup",
-    "passphrase_note": "null derives a per-board passphrase from the chip ID; tools/deploy.py prints it",
+    "passphrase_note": "null means a random passphrase, generated once and kept in setup.json on the board; tools/deploy.py prints it",
     "password": null
   },
 
