@@ -126,6 +126,13 @@ only within a version. `GET /api/v1/health` is a cheap liveness check.
 `GET /` is the human page: red on black, because whoever reads it at one in the morning is
 dark-adapted. `?theme=day` for the ordinary version.
 
+![The status page in day theme: a NO-GO verdict for an overcast night, above the reasons for it,
+the night's timings, the moon, and every dark hour scored.](docs/status-page-day.png)
+
+<sub>`GET /?theme=day`, off the board on a thoroughly overcast night — the case the LED reports as
+a single 60 ms blip. Forecast data by [Open-Meteo](https://open-meteo.com/), used here under
+[CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).</sub>
+
 ## Working on it
 
 ```
