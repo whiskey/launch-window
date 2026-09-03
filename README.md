@@ -14,7 +14,7 @@ onboard LED. Plug it into any USB socket where you will walk past it.
 <td width="50%"><img src="docs/status-page-day.png" alt="NO-GO: a red verdict, no usable stretch of dark sky, overcast for 8 of 8 dark hours at 99 % cloud and gusty."></td>
 </tr>
 <tr>
-<td valign="top"><sub><b>GO</b> — a clear night, rendered by <code>tools/simulate.py --serve --date&nbsp;2026-09-06</code>: the same modules the board runs, against that night's real forecast. The <code>up 0 s</code> in its footer is the tell that it is the simulator and not the board.</sub></td>
+<td valign="top"><sub><b>GO</b> — a clear night, rendered by the simulator rather than the board: the same modules, against that night's real forecast. The <code>up 0 s</code> in its footer is the tell.</sub></td>
 <td valign="top"><sub><b>NO-GO</b> — an overcast one, served by the board itself. This is the case the LED reduces to a single 60 ms blip.</sub></td>
 </tr>
 </table>
