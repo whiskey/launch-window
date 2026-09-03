@@ -8,6 +8,20 @@ It computes tonight's darkness and moonlight on the board, fetches the hourly cl
 dew-point forecast for your site, grades every dark hour, and signals the verdict on its single
 onboard LED. Plug it into any USB socket where you will walk past it.
 
+<table>
+<tr>
+<td width="50%"><img src="docs/status-page-go.png" alt="GO: a green verdict above an imaging window of 21:47 to 04:22, 6.6 hours of usable dark sky at a mean score of 82, and eight dark hours scored between 0 % and 44 % cloud."></td>
+<td width="50%"><img src="docs/status-page-day.png" alt="NO-GO: a red verdict, no usable stretch of dark sky, overcast for 8 of 8 dark hours at 99 % cloud and gusty."></td>
+</tr>
+<tr>
+<td valign="top"><sub><b>GO</b> — a clear night, rendered by <code>tools/simulate.py --serve --date&nbsp;2026-09-06</code>: the same modules the board runs, against that night's real forecast. The <code>up 0 s</code> in its footer is the tell that it is the simulator and not the board.</sub></td>
+<td valign="top"><sub><b>NO-GO</b> — an overcast one, served by the board itself. This is the case the LED reduces to a single 60 ms blip.</sub></td>
+</tr>
+</table>
+
+<sub>Both are `GET /?theme=day`. Forecast data by [Open-Meteo](https://open-meteo.com/), used here
+under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).</sub>
+
 ```
                     ┌──────────────────────────────────────┐
    Open-Meteo ─────►│  Pico W                              │
@@ -124,21 +138,8 @@ only within a version. `GET /api/v1/health` is a cheap liveness check.
 `POST /api/v1/refresh` fetches immediately.
 
 `GET /` is the human page: red on black, because whoever reads it at one in the morning is
-dark-adapted. `?theme=day` for the ordinary version.
-
-<table>
-<tr>
-<td width="50%"><img src="docs/status-page-go.png" alt="GO: a green verdict above an imaging window of 21:47 to 04:22, 6.6 hours of usable dark sky at a mean score of 82, and eight dark hours scored between 0 % and 44 % cloud."></td>
-<td width="50%"><img src="docs/status-page-day.png" alt="NO-GO: a red verdict, no usable stretch of dark sky, overcast for 8 of 8 dark hours at 99 % cloud and gusty."></td>
-</tr>
-<tr>
-<td valign="top"><sub><b>GO</b> — the night of 6 September, rendered by <code>tools/simulate.py --serve --date&nbsp;2026-09-06</code>: the same modules the board runs, against that night's real forecast. The <code>up 0 s</code> in the footer is how you tell the simulator from the board.</sub></td>
-<td valign="top"><sub><b>NO-GO</b> — served by the board itself on a thoroughly overcast night. This is the case the LED reduces to a single 60 ms blip.</sub></td>
-</tr>
-</table>
-
-<sub>Both are `GET /?theme=day`. Forecast data by [Open-Meteo](https://open-meteo.com/), used here
-under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).</sub>
+dark-adapted. `?theme=day` for the ordinary version — the two captures at the top of this
+file.
 
 ## Working on it
 
