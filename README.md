@@ -141,6 +141,11 @@ only within a version. `GET /api/v1/health` is a cheap liveness check.
 dark-adapted. `?theme=day` for the ordinary version — the two captures at the top of this
 file.
 
+[`app/`](app/) is a SwiftUI client for iPhone, iPad and Mac that reads that document into a home
+screen widget, so the answer arrives without anyone opening anything. It is the only consumer of
+the contract other than the beacon's own page, and it is held to the same three rules — including
+the one that makes it draw `unknown` and `no-go` as different answers.
+
 ## Working on it
 
 ```
@@ -206,6 +211,7 @@ ever had. That is a thirty-second test, and it is step 2 above.
 | `firmware/lib/portal.py` | Setup access point, captive DNS, credential form |
 | `firmware/lib/server.py`, `weather.py`, `clock.py`, `led.py`, `wifi.py`, `store.py` | The rest |
 | `protocol/` | The versioned JSON contract and its schema |
+| `app/` | The iPhone, iPad and Mac client, and its widgets |
 | `tools/` | Deploy, simulate, smoke-test, verify, serial driver |
 | `tests/` | The host suite |
 
