@@ -855,6 +855,22 @@
         }
       }
     },
+    "label.outlook" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Nächte danach"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The nights after this one"
+          }
+        }
+      }
+    },
     "label.readAt" : {
       "comment" : "When this client last got an answer, e.g. 'read 22:14'",
       "localizations" : {
@@ -1033,6 +1049,22 @@
       }
     },
     "label.tonight" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute Nacht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tonight"
+          }
+        }
+      }
+    },
+    "label.tonightShort" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1239,6 +1271,134 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "On"
+          }
+        }
+      }
+    },
+    "outlook.checkAgrees" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gegen den Beacon geprüft: Er stimmt für heute Nacht überein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked against the beacon: it agrees about tonight."
+          }
+        }
+      }
+    },
+    "outlook.checkDisagrees" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Gerät weicht für heute Nacht vom Beacon ab: %1$@. Den Nächten unten ist mit Misstrauen zu begegnen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This device disagrees with the beacon about tonight: %1$@. Treat the nights below with suspicion."
+          }
+        }
+      }
+    },
+    "outlook.confidence" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Gerät berechnet, mit denselben Gewichten wie auf dem Beacon. Bewölkung über etwa drei Tage hinaus ist ein Hinweis, keine Vorhersage."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Computed on this device from the same weights the beacon uses. Cloud beyond about three days is a hint rather than a forecast."
+          }
+        }
+      }
+    },
+    "outlook.error.badURL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Adresse der Vorhersage konnte nicht gebildet werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The forecast address could not be built."
+          }
+        }
+      }
+    },
+    "outlook.error.httpStatus" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Vorhersagedienst antwortete %1$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The forecast service answered %1$@."
+          }
+        }
+      }
+    },
+    "outlook.error.malformed" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Vorhersage war nicht lesbar: %1$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The forecast could not be read: %1$@"
+          }
+        }
+      }
+    },
+    "outlook.error.unreachable" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Vorhersage war nicht erreichbar: %1$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not reach the forecast: %1$@"
+          }
+        }
+      }
+    },
+    "outlook.loading" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die nächsten Nächte werden berechnet …"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Working out the next nights…"
           }
         }
       }

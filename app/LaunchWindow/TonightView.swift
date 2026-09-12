@@ -68,6 +68,7 @@ struct TonightView: View {
                 banner
                 night(document)
                 reasons(document)
+                OutlookSection(model: model, palette: palette)
                 sky(document)
                 beacon(document)
             } else {

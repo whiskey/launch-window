@@ -84,6 +84,57 @@ want different answers.
 </tr>
 </table>
 
+## The nights after this one — a proof of concept
+
+The beacon answers about one night. `app/Shared/SkyMath.swift` and
+`app/Shared/VerdictEngine.swift` are Swift ports of `firmware/lib/sky.py` and
+`firmware/lib/verdict.py`, which lets this client grade the rest of the week
+from a forecast it fetches itself.
+
+**This duplicates the project's core judgement, which is a real cost.** It was
+taken because the alternatives are worse: the board already fails intermittently
+to allocate the 4 kB its own document needs (`json_response` builds it as one
+contiguous string), so growing that document is the wrong direction, and a
+firmware endpoint serving future astronomy would still need that fixed first.
+Nothing in the outlook touches the beacon.
+
+What makes the duplication bearable is that it is checked, three ways:
+
+| Check | What it holds | Result |
+|---|---|---|
+| `tools/compare-sky.py` | Swift astronomy against `sky.py`, four sites including one with no astronomical night and one in the southern hemisphere | 1460 nights, 0 disagreeing |
+| `tools/compare-verdict.py` | Swift grading against `verdict.py` over constructed nights — moonlit, gusty, dewy, clearing at three, with holes in the cloud series | 300 cases, all four states, 0 disagreeing |
+| `OutlookEngine.selfCheck` | the engine regrades *tonight* from the raw values in the beacon's own document and compares | runs on every refresh, in the app |
+
+The third is the one that keeps working after this is written. The beacon
+publishes each hour's measured cloud, gusts, temperature, dew point and
+precipitation alongside the grade, which makes its document a complete input to
+the engine and therefore a complete test of it. If the two ever disagree, the
+outlook panel says so and tells the reader to distrust everything below it.
+
+It has already earned its place: the bundled `goNight` sample used to carry
+scores written by hand, and the self-check caught them — an engine regrading
+those raw values got 85.9 where the document claimed 82.2, because the document
+was fiction. `tools/make-samples.py` now grades the sample with `verdict.py`
+itself.
+
+Two smaller decisions worth stating. The outlook starts at **tomorrow**: the
+beacon has already answered for tonight, from its own forecast, and a second
+opinion on the same screen could differ slightly and read as a fault — that
+comparison happens once, deliberately, in `selfCheck`. And the forecast comes
+from **Open-Meteo**, the same source the beacon uses, rather than from WeatherKit
+which is already on the device and would need no client at all; one source means
+tonight and Thursday are comparable, which is the entire point of a column of
+nights.
+
+Confidence is drawn, not claimed: nights beyond three days are rendered faintly,
+and the panel says in words that hourly cloud that far out is a hint rather than
+a forecast.
+
+**Not done, deliberately.** The outlook is app-only — no widget shows it yet,
+and the widget's refresh budget and the extra Open-Meteo call are the questions
+to settle before it does.
+
 ## German and English
 
 The interface follows the system language. The beacon, though, generates its
@@ -252,6 +303,10 @@ LW_PROBE=launch-window.home "$APP"           # read once; report and exit
 LW_FAIL_BY_NAME=1 LW_PROBE=… "$APP"          # ... with every by-name request forced to fail
 LW_GALLERY=1 "$APP"                          # render every widget size, in every state, to PNG
 LW_GALLERY=1 "$APP" -AppleLanguages "(de)"   # ... in German
+LW_SELFCHECK=launch-window.home "$APP"       # regrade the beacon's night and diff
+LW_OUTLOOK=launch-window.home:7 "$APP"       # the whole outlook, end to end
+LW_SKY=<unix>:<nights>:<lat>:<lon> "$APP"    # astronomy, for tools/compare-sky.py
+LW_VERDICT='<json>' "$APP"                   # grade one night, for tools/compare-verdict.py
 ```
 
 `LW_PROBE` reports what the name resolves to and whether that is private, which
@@ -272,7 +327,12 @@ came from it.
 
 ```sh
 app/tools/make-samples.py --host launch-window.home   # refresh the bundled sample nights
+app/tools/compare-sky.py "$APP" --nights 365          # Swift astronomy vs sky.py
+app/tools/compare-verdict.py "$APP" --cases 300       # Swift grading vs verdict.py
 ```
+
+The two comparisons need `firmware/lib` on the path, which they arrange
+themselves; nothing has to be installed.
 
 ## Layout
 
@@ -287,9 +347,13 @@ app/tools/make-samples.py --host launch-window.home   # refresh the bundled samp
 | `Shared/Palette.swift` | The LED's colour language, and the night-vision mode |
 | `Shared/Components.swift` | The hour strip, the banners, the fact grids |
 | `Shared/WidgetLayouts.swift` | The four system sizes, free of WidgetKit so they can be drawn to a file |
+| `Shared/SkyMath.swift` | Sun and Moon, ported from `sky.py` (proof of concept) |
+| `Shared/VerdictEngine.swift` | The grading weights, ported from `verdict.py` (proof of concept) |
+| `Shared/OpenMeteo.swift` | Several days of hourly forecast, from the beacon's own source |
+| `Shared/Outlook.swift` | A week of nights, and the self-check against the beacon |
 | `LaunchWindow/` | The app: the screen, the model, the settings, the development aids |
 | `LaunchWindowWidget/` | The timeline provider, the configuration intent, the Lock Screen sizes |
-| `tools/` | The string checker and the sample generator |
+| `tools/` | The string checker, the sample generator, and the two engine comparisons |
 
 ## Licence
 

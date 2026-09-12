@@ -154,6 +154,36 @@ enum Strings {
         String(localized: "label.hours", defaultValue: "Hours")
     }
 
+    static var outlook: String {
+        String(localized: "label.outlook", defaultValue: "The nights after this one")
+    }
+
+    static var outlookLoading: String {
+        String(localized: "outlook.loading", defaultValue: "Working out the next nights…")
+    }
+
+    /// Said plainly rather than implied by a faded colour: an hourly cloud
+    /// forecast four days out is a hint, and this project does not dress weak
+    /// data as strong.
+    static var outlookConfidence: String {
+        String(localized: "outlook.confidence",
+               defaultValue: "Computed on this device from the same weights the beacon uses. Cloud beyond about three days is a hint rather than a forecast.")
+    }
+
+    static var outlookAgrees: String {
+        String(localized: "outlook.checkAgrees",
+               defaultValue: "Checked against the beacon: it agrees about tonight.")
+    }
+
+    static func outlookDisagrees(_ detail: String) -> String {
+        String(localized: "outlook.checkDisagrees",
+               defaultValue: "This device disagrees with the beacon about tonight: \(detail). Treat the nights below with suspicion.")
+    }
+
+    static var tonightLabel: String {
+        String(localized: "label.tonightShort", defaultValue: "Tonight")
+    }
+
     static var reasons: String {
         String(localized: "label.reasons", defaultValue: "Reasons")
     }

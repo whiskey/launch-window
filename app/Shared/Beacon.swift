@@ -196,6 +196,18 @@ struct Verdict: Decodable, Hashable, Sendable {
     /// described in `reasons` instead.
     let window: ObservingWindow?
     let hours: [ForecastHour]
+
+    /// For `VerdictEngine`, which produces this type rather than one of its own
+    /// so that a computed night and a beacon-served night render through the
+    /// same views and can be compared field by field.
+    init(state: VerdictState, score: Double?, reasons: [String],
+         window: ObservingWindow?, hours: [ForecastHour]) {
+        self.state = state
+        self.score = score
+        self.reasons = reasons
+        self.window = window
+        self.hours = hours
+    }
 }
 
 struct ObservingWindow: Decodable, Hashable, Sendable {
@@ -211,6 +223,16 @@ struct ObservingWindow: Decodable, Hashable, Sendable {
         case startLocal = "start_local"
         case endLocal = "end_local"
         case meanScore = "mean_score"
+    }
+
+    init(start: Date?, end: Date?, startLocal: String?, endLocal: String?,
+         hours: Double, meanScore: Double?) {
+        self.start = start
+        self.end = end
+        self.startLocal = startLocal
+        self.endLocal = endLocal
+        self.hours = hours
+        self.meanScore = meanScore
     }
 }
 
@@ -254,6 +276,25 @@ struct ForecastHour: Decodable, Hashable, Sendable, Identifiable {
         case temperature = "temperature_2m"
         case dewPoint = "dew_point_2m"
         case precipitationProbability = "precipitation_probability"
+    }
+
+    init(timestamp: Double, time: Date?, local: String?, score: Double?,
+         penalties: [String: Double], veto: String?, moonAltitudeDegrees: Double?,
+         cloudCover: Double?, cloudCoverHigh: Double?, windGusts: Double?,
+         temperature: Double?, dewPoint: Double?, precipitationProbability: Double?) {
+        self.timestamp = timestamp
+        self.time = time
+        self.local = local
+        self.score = score
+        self.penalties = penalties
+        self.veto = veto
+        self.moonAltitudeDegrees = moonAltitudeDegrees
+        self.cloudCover = cloudCover
+        self.cloudCoverHigh = cloudCoverHigh
+        self.windGusts = windGusts
+        self.temperature = temperature
+        self.dewPoint = dewPoint
+        self.precipitationProbability = precipitationProbability
     }
 
     init(from decoder: Decoder) throws {

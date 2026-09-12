@@ -52,12 +52,31 @@ final class BeaconModel {
     #if DEBUG
     /// A model holding a fixed reading. For previews and for the development
     /// gallery, neither of which should depend on a beacon being switched on.
-    init(showing snapshot: BeaconSnapshot) {
+    init(showing snapshot: BeaconSnapshot,
+         outlook: [NightOutlook] = [],
+         selfCheck: OutlookEngine.SelfCheck? = nil) {
         host = snapshot.host
         nightVision = false
         self.snapshot = snapshot
+        self.outlook = outlook
+        self.selfCheck = selfCheck
     }
     #endif
+
+    // MARK: - Outlook (proof of concept)
+
+    /// The nights after the one the beacon knows about, graded on this device.
+    private(set) var outlook: [NightOutlook] = []
+    private(set) var outlookFailure: String?
+    private(set) var isLoadingOutlook = false
+    /// Whether this device's engine reproduces the beacon's own verdict for
+    /// tonight. The outlook is only worth as much as this.
+    private(set) var selfCheck: OutlookEngine.SelfCheck?
+
+    /// How many nights to project. Open-Meteo serves sixteen days; this asks
+    /// for a week, because the honest value of an hourly cloud forecast is
+    /// spent well before that.
+    var outlookNights = 7
 
     func load() async {
         guard !isLoading else { return }
@@ -65,6 +84,31 @@ final class BeaconModel {
         defer { isLoading = false }
         snapshot = await BeaconLoader.load(host: host)
         if snapshot.origin == .live { reloadWidgets() }
+        await loadOutlook()
+    }
+
+    func loadOutlook() async {
+        guard let document = snapshot.document, !isLoadingOutlook else { return }
+        isLoadingOutlook = true
+        defer { isLoadingOutlook = false }
+
+        // Check the engine against the device before trusting it about nights
+        // the device cannot see.
+        selfCheck = OutlookEngine.selfCheck(document: document)
+
+        let site = document.site
+        do {
+            let client = OpenMeteo(latitude: site.latitude, longitude: site.longitude)
+            let rows = try await client.hourly(days: outlookNights + 2)
+            outlook = OutlookEngine.followingNights(rows: rows,
+                                                    latitude: site.latitude,
+                                                    longitude: site.longitude,
+                                                    count: outlookNights)
+            outlookFailure = nil
+        } catch {
+            outlook = []
+            outlookFailure = (error as? OpenMeteo.Failure)?.message ?? error.localizedDescription
+        }
     }
 
     /// Ask the beacon to fetch the forecast now rather than at its next

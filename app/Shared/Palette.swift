@@ -88,14 +88,36 @@ struct Palette: Sendable, Equatable {
     }
 }
 
-/// The thresholds the firmware grades against, mirrored here so the widget's
-/// colours mean the same thing the verdict does. They live in
-/// `firmware/config.json`; if they are changed there, change them here.
+/// The thresholds the widget's colours mean, taken from the same place the
+/// grading engine takes them so the two cannot drift apart. They originate in
+/// `firmware/config.json`; a board with edited thresholds will disagree, and
+/// `OutlookEngine.selfCheck` is what would notice.
 enum Grading {
     /// An hour at or above this can be imaged.
-    static let usableScore: Double = 55
+    static let usableScore = VerdictEngine.Thresholds.default.usableScore
     /// A run at this mean score, long enough, is a GO.
-    static let goScore: Double = 70
+    static let goScore = VerdictEngine.Thresholds.default.goScore
+}
+
+/// SF Symbols for the eight phases.
+///
+/// A glyph rather than the name: at the width an outlook row can spare, every
+/// phase name truncates, and the German ones truncate sooner. The shape carries
+/// it better than six characters of "waxing cre…" ever could.
+enum MoonSymbol {
+    static func name(for phase: String) -> String {
+        switch phase {
+        case "new": return "moonphase.new.moon"
+        case "waxing crescent": return "moonphase.waxing.crescent"
+        case "first quarter": return "moonphase.first.quarter"
+        case "waxing gibbous": return "moonphase.waxing.gibbous"
+        case "full": return "moonphase.full.moon"
+        case "waning gibbous": return "moonphase.waning.gibbous"
+        case "last quarter": return "moonphase.last.quarter"
+        case "waning crescent": return "moonphase.waning.crescent"
+        default: return "moon"
+        }
+    }
 }
 
 /// SF Symbols for the four states. Chosen to differ in outline, not only in
