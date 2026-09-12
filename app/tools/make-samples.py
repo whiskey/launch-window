@@ -25,6 +25,13 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "Shared" / "SampleBeacon.swift"
 
+# The firmware's own modules, so the invented clear night is graded by the code
+# that would have graded it on the board.
+sys.path.insert(0, str(ROOT.parent / "firmware" / "lib"))
+import clock  # noqa: E402
+import sky  # noqa: E402
+import verdict as verdict_mod  # noqa: E402
+
 # A clear night over the same dark window: cloud, high cloud, gusts, temperature,
 # dew point, precipitation probability, score. Every hour is at or above the
 # firmware's usable_score of 55, which is what makes one unbroken window the
@@ -60,38 +67,95 @@ def make_nogo(live: dict) -> dict:
 
 
 def make_go(nogo: dict) -> dict:
+    """The same night, cleared up — and then graded by the firmware itself.
+
+    The raw values below are invented; the verdict over them is not. Running
+    `verdict.assess` rather than writing plausible scores by hand is what makes
+    this a document the beacon could actually have served, and therefore a
+    document `OutlookEngine.selfCheck` can be pointed at. The first version of
+    this generator wrote the scores by hand, and the self-check caught it
+    immediately: an engine regrading those raw values got 85.9 where the
+    document claimed 82.2, because the document was fiction.
+    """
     doc = copy.deepcopy(nogo)
     hours = doc["verdict"]["hours"]
     if not hours:
         sys.exit("the source document has no graded hours; point at a night, not a noon")
-    for hour, values in zip(hours, CLEAR_HOURS):
-        cloud, high, gust, temp, dew, precip, score = values
-        hour.update({"cloud_cover": cloud, "cloud_cover_high": high,
-                     "wind_gusts_10m": gust, "temperature_2m": temp,
-                     "dew_point_2m": dew, "precipitation_probability": precip,
-                     "score": score, "veto": None,
-                     "penalties": {"cloud": round(cloud * 0.85, 1)}})
-    scored = [h["score"] for h in hours if h["score"] is not None]
-    mean = round(sum(scored) / len(scored), 1)
-    assert min(scored) >= USABLE_SCORE, "every hour in the window must clear usable_score"
 
-    start = hours[0].get("time") or doc["night"]["dark_start"]
-    doc["verdict"].update({
-        "state": "go", "score": mean,
-        "reasons": ["%.1f h of usable dark sky, mean score %.0f" % (len(scored) * 0.8, mean),
-                    "cloud cover averaging %.0f %%"
-                    % (sum(v[0] for v in CLEAR_HOURS[:len(scored)]) / len(scored))],
-        "window": {
-            "start": doc["night"]["dark_start"] or start,
-            "end": doc["night"]["dark_end"],
-            "start_local": doc["night"]["dusk_astronomical_local"]
-            or doc["night"]["sunset_local"],
-            "end_local": doc["night"]["dawn_astronomical_local"]
-            or doc["night"]["sunrise_local"],
-            "hours": round(len(scored) * 0.8, 1), "mean_score": mean,
-        },
-    })
+    rows = []
+    for hour, values in zip(hours, CLEAR_HOURS):
+        cloud, high, gust, temp, dew, precip, _ = values
+        rows.append({"ts": hour["ts"], "cloud_cover": cloud, "cloud_cover_high": high,
+                     "wind_gusts_10m": gust, "temperature_2m": temp,
+                     "dew_point_2m": dew, "precipitation_probability": precip})
+
+    latitude = doc["site"]["latitude"]
+    longitude = doc["site"]["longitude"]
+    reference = _unix(doc["generated_at"])
+    night = sky.night(reference, latitude, longitude)
+
+    def moon_at(ts):
+        return (sky.moon_altaz(ts, latitude, longitude)[0], sky.moon_illumination(ts))
+
+    decision = verdict_mod.assess(rows, night, moon_at)
+    if decision["state"] != "go":
+        sys.exit("the invented clear night graded %s, not go; adjust CLEAR_HOURS"
+                 % decision["state"])
+
+    graded = []
+    for entry, original in zip(decision["hours"], hours):
+        merged = dict(entry)
+        # `ts` stays the integer it is in the document; `time` and `local` are
+        # the rendered forms the beacon adds alongside it.
+        merged["time"] = clock.iso_utc(entry["ts"])
+        merged["local"] = original.get("local")
+        graded.append(merged)
+
+    # `assess` returns raw timestamps; the document renders them the way
+    # `state.document()` does, or the sample is not a document at all.
+    window = dict(decision["window"])
+    window["start_local"] = _hhmm(window["start"], doc)
+    window["end_local"] = _hhmm(window["end"], doc)
+    window["start"] = clock.iso_utc(window["start"])
+    window["end"] = clock.iso_utc(window["end"])
+
+    doc["verdict"] = {
+        "state": decision["state"],
+        "score": decision["score"],
+        "reasons": decision["reasons"],
+        "window": window,
+        "hours": graded,
+    }
     return doc
+
+
+def _unix(iso: str) -> int:
+    """`2026-09-12T11:14:25Z` to a Unix timestamp, without importing a library
+    the firmware does not have."""
+    date, _, rest = iso.partition("T")
+    year, month, day = (int(part) for part in date.split("-"))
+    hour, minute, second = (int(part) for part in rest.rstrip("Z").split(":"))
+    return clock.days_from_civil(year, month, day) * 86400 + hour * 3600 + minute * 60 + second
+
+
+def _hhmm(ts: int, doc: dict) -> str:
+    """Local time at the site, using the same clock module the board uses."""
+    offset = _offset_minutes(doc)
+    return "%02d:%02d" % (((ts + offset * 60) % 86400) // 3600,
+                          (((ts + offset * 60) % 3600) // 60))
+
+
+def _offset_minutes(doc: dict) -> int:
+    """Derived from a timestamp the document already renders both ways, so the
+    generator needs no timezone database of its own."""
+    dark_start = doc["night"]["dark_start"]
+    local = doc["night"]["dusk_astronomical_local"]
+    if not dark_start or not local:
+        return 0
+    utc = _unix(dark_start)
+    wanted = int(local[:2]) * 60 + int(local[3:5])
+    have = (utc % 86400) // 60
+    return (wanted - have) % 1440
 
 
 def make_unknown(nogo: dict) -> dict:
