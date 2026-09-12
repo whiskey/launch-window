@@ -8,19 +8,19 @@
 	<true/>
 	<!-- Shared with the other tools of this observing season, not just with this
 	     app's own widget. An App Group is per development team, so every tool
-	     signed by ABCDE12345 can join it; what lives there is the handful of
+	     signed by the same team can join it; what lives there is the handful of
 	     settings that belong to the observer rather than to one application —
 	     night vision above all, because dark adaptation is not per-app.
 
-	     macOS requires the team identifier in front of the group name; iOS does
-	     not, which is the only difference between this file and its counterpart.
-	     SharedStore probes for whichever one was actually granted and falls back
-	     to per-process defaults if neither was, so this entitlement is an
-	     improvement, never a dependency. Keys are namespaced `astro.` for shared
-	     and `launchWindow.` for private; see SharedStore. -->
+	     $(LW_APP_GROUP) comes from Config/Signing.xcconfig, which spells it bare
+	     for iOS and team-prefixed for macOS. One file for both platforms, and no
+	     team identifier written down here. SharedStore probes for whichever group
+	     was actually granted and falls back to per-process defaults if none was,
+	     so this entitlement is an improvement, never a dependency. Keys are
+	     namespaced `astro.` for shared and `launchWindow.` for private. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.de.staticline.astro</string>
+		<string>$(LW_APP_GROUP)</string>
 	</array>
 </dict>
 </plist>

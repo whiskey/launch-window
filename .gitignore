@@ -14,3 +14,7 @@ xcuserdata/
 DerivedData/
 build/
 .swiftpm/
+
+# Signing identity: personal to one machine, never to the repository.
+# Config/Local.xcconfig.example shows what it should contain.
+app/Config/Local.xcconfig

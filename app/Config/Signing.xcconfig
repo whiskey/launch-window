@@ -1,0 +1,19 @@
+// Signing identity, and everything derived from it.
+//
+// The development team is the one value in this project that identifies its
+// author rather than its behaviour, so it lives in an untracked file beside
+// this one. `#include?` — with the question mark — makes that file optional: a
+// checkout without it still opens, builds for the Simulator, and only fails
+// where signing genuinely needs a team.
+//
+// Copy Config/Local.xcconfig.example to Config/Local.xcconfig and put yours in.
+#include? "Local.xcconfig"
+
+// The App Group, spelled the way each platform requires it.
+//
+// iOS declares the bare identifier; sandboxed macOS requires the team in front
+// of it. Deriving both from DEVELOPMENT_TEAM here means the entitlements, the
+// Info.plists and the code all read one definition instead of repeating a team
+// identifier none of them should contain.
+LW_APP_GROUP = group.de.staticline.astro
+LW_APP_GROUP[sdk=macosx*] = $(DEVELOPMENT_TEAM).group.de.staticline.astro

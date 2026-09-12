@@ -159,8 +159,9 @@ app/tools/check-strings.py     # keys used ↔ keys translated, both ways, and p
 
 ## Building it
 
-Open `LaunchWindow.xcodeproj` and run. One multiplatform app target and one
-widget extension, both iOS 18 / macOS 15 and up.
+Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and set your
+development team in it. Then open `LaunchWindow.xcodeproj` and run. One
+multiplatform app target and one widget extension, both iOS 18 / macOS 15 and up.
 
 ```sh
 xcodebuild -project app/LaunchWindow.xcodeproj -scheme LaunchWindow \
@@ -220,6 +221,28 @@ literal private addresses, and `launch-window.home` is none of those. Setting
 both is the configuration that silently refuses every connection, which is
 exactly what it did here until `LW_PROBE` caught it.
 
+**Signing.** The development team is the one value here that identifies the
+author rather than the behaviour, so it lives in `Config/Local.xcconfig`, which
+is untracked. Copy `Config/Local.xcconfig.example` over it and put yours in.
+`Config/Signing.xcconfig` pulls it in with `#include?` — the question mark makes
+it optional, so a checkout without it still opens and still builds for the
+Simulator, and only fails where signing genuinely needs a team.
+
+That file is also where the App Group gets spelled, because macOS wants the team
+in front of the identifier and iOS does not:
+
+```
+LW_APP_GROUP = group.de.staticline.astro
+LW_APP_GROUP[sdk=macosx*] = $(DEVELOPMENT_TEAM).group.de.staticline.astro
+```
+
+One definition reaches all three places that need it: the entitlements use
+`$(LW_APP_GROUP)`, so there is a single entitlements file per target rather than
+one per platform; the `Info.plist` carries it as `LWAppGroup`; and `SharedStore`
+reads that key instead of hardcoding either spelling. The code therefore cannot
+disagree with the entitlement it was signed with, and no team identifier is
+written down in the repository.
+
 **App Group.** The app and the widget share an App Group so that the address
 typed in one is the address used by the other. It is named
 `group.de.staticline.astro`, not after this app, because an App Group is per
@@ -266,11 +289,11 @@ Everything else is namespaced, because a shared container is a shared key space:
 | `astro.*` | Shared on purpose, for every tool in the group |
 | `launchWindow.*` | This app and its widget, and nobody else's business |
 
-macOS wants the team identifier in front of the group name and iOS does not, so
-there are two entitlements files and a per-SDK build setting. `SharedStore`
-probes for whichever group was actually granted and falls back to per-process
-defaults if neither was — the entitlement is an improvement, never a dependency,
-and the settings screen says which of the two you have.
+`SharedStore` still probes: it writes a file in the container, because on macOS
+`containerURL(forSecurityApplicationGroupIdentifier:)` returns a path for groups
+the process was never granted. If nothing is usable it falls back to per-process
+defaults — the entitlement is an improvement, never a dependency, and the
+settings screen says which you have.
 
 It does need registering once, and only Xcode can do it: **build for an iOS
 device from Xcode before building from the command line.** Automatic signing
@@ -353,6 +376,7 @@ themselves; nothing has to be installed.
 | `Shared/Outlook.swift` | A week of nights, and the self-check against the beacon |
 | `LaunchWindow/` | The app: the screen, the model, the settings, the development aids |
 | `LaunchWindowWidget/` | The timeline provider, the configuration intent, the Lock Screen sizes |
+| `Config/` | Signing, and the App Group spelling derived from it |
 | `tools/` | The string checker, the sample generator, and the two engine comparisons |
 
 ## Licence

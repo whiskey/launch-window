@@ -17,6 +17,11 @@
 	     exception rather than a pinned domain: a second beacon at a second site
 	     is the point of the setting. Nothing is sent anywhere but the host the
 	     owner typed. -->
+	<!-- The App Group this build was actually entitled to, spelled for this
+	     platform by Config/Signing.xcconfig. SharedStore reads it rather than
+	     guessing, which is what keeps the team identifier out of the source. -->
+	<key>LWAppGroup</key>
+	<string>$(LW_APP_GROUP)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

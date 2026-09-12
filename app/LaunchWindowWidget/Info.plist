@@ -10,6 +10,11 @@
 	<!-- The extension does its own fetching, so it needs the same exception the
 	     app has. See LaunchWindow/Info.plist for why it is this shape, and in
 	     particular why NSAllowsLocalNetworking must not be added to it. -->
+	<!-- The App Group this build was actually entitled to, spelled for this
+	     platform by Config/Signing.xcconfig. SharedStore reads it rather than
+	     guessing, which is what keeps the team identifier out of the source. -->
+	<key>LWAppGroup</key>
+	<string>$(LW_APP_GROUP)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

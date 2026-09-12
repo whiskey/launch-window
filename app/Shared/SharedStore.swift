@@ -29,15 +29,31 @@ enum SharedStore {
     /// Where the beacon answers unless told otherwise.
     static let defaultHost = "launch-window.home"
 
-    /// iOS declares the bare group; sandboxed macOS requires the team ID in
-    /// front of it. Each platform's own spelling is tried first, and the other
-    /// is kept as a fallback so a build signed the other way still shares.
+    /// The bare identifier, which is what iOS declares and what macOS needs a
+    /// team in front of. Written once, here, and nowhere else.
+    private static let bareGroup = "group.de.staticline.astro"
+
+    /// The group this build was actually entitled to, as `LWAppGroup` in
+    /// `Info.plist`.
+    ///
+    /// It is set from `$(LW_APP_GROUP)` in `Config/Signing.xcconfig`, which
+    /// spells it bare for iOS and team-prefixed for macOS. Reading it beats
+    /// hardcoding both spellings: the team identifier stays out of the source
+    /// entirely, and the code cannot disagree with the entitlement it was
+    /// actually signed with, because they are generated from one definition.
+    private static var declaredGroup: String? {
+        let value = Bundle.main.object(forInfoDictionaryKey: "LWAppGroup") as? String
+        guard let value, !value.isEmpty, !value.hasPrefix("$(") else { return nil }
+        return value
+    }
+
+    /// What is entitled first, then the bare name as a fallback for a build
+    /// whose Info.plist did not carry one.
     private static var groupCandidates: [String] {
-        #if os(macOS)
-        ["ABCDE12345.group.de.staticline.astro", "group.de.staticline.astro"]
-        #else
-        ["group.de.staticline.astro", "ABCDE12345.group.de.staticline.astro"]
-        #endif
+        var candidates: [String] = []
+        if let declared = declaredGroup { candidates.append(declared) }
+        if !candidates.contains(bareGroup) { candidates.append(bareGroup) }
+        return candidates
     }
 
     /// The group this process can really use, if any.

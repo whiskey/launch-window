@@ -1,0 +1,9 @@
+// Copy to Config/Local.xcconfig, which is untracked, and set your own team.
+//
+// Xcode shows it under Signing & Capabilities as "Team"; `security find-identity
+// -v -p codesigning` prints it in brackets after your name.
+//
+// Without this file DEVELOPMENT_TEAM is empty. Simulator builds still work;
+// device and sandboxed macOS builds will not, and on macOS the App Group
+// identifier loses its required team prefix.
+DEVELOPMENT_TEAM = ABCDE12345
