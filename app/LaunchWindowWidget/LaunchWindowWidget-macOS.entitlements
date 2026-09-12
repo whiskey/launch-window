@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<!-- Shared with the other tools of this observing season, not just with this
+	     app's own widget. An App Group is per development team, so every tool
+	     signed by ABCDE12345 can join it; what lives there is the handful of
+	     settings that belong to the observer rather than to one application —
+	     night vision above all, because dark adaptation is not per-app.
+
+	     macOS requires the team identifier in front of the group name; iOS does
+	     not, which is the only difference between this file and its counterpart.
+	     SharedStore probes for whichever one was actually granted and falls back
+	     to per-process defaults if neither was, so this entitlement is an
+	     improvement, never a dependency. Keys are namespaced `astro.` for shared
+	     and `launchWindow.` for private; see SharedStore. -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>ABCDE12345.group.de.staticline.astro</string>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- The beacon is a Pico W. It has 264 kB of RAM, no TLS stack, and no
+	     certificate it could present for a name like launch-window.home even
+	     if it had one, so this app speaks plain HTTP to it and says so.
+
+	     Only NSAllowsArbitraryLoads, and deliberately not NSAllowsLocalNetworking
+	     alongside it: when that key is present, App Transport Security ignores
+	     NSAllowsArbitraryLoads entirely — and it would not cover this beacon
+	     anyway, since it reaches unqualified names, .local and literal private
+	     addresses, while launch-window.home is none of those. Setting both is
+	     the configuration that silently refuses every connection.
+
+	     The address is user-configurable, which is why this is a blanket
+	     exception rather than a pinned domain: a second beacon at a second site
+	     is the point of the setting. Nothing is sent anywhere but the host the
+	     owner typed. -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<!-- Required since iOS 14 and macOS 15 to talk to anything on the LAN.
+	     Only the app can raise this prompt; a widget extension cannot, which
+	     is why the app should be opened once before adding the widget. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Launch Window reads tonight's verdict from your beacon on this network.</string>
+</dict>
+</plist>

@@ -6,3 +6,11 @@ setup.json
 __pycache__/
 *.pyc
 .DS_Store
+
+# Xcode, for app/. The project file is committed; everything Xcode derives from
+# it, and everything it writes per user, is not.
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+.swiftpm/

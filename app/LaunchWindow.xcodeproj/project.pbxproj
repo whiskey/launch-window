@@ -1,0 +1,591 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		LW00000000000000000002A /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW00000000000000000001F /* Beacon.swift */; };
+		LW000000000000000000035 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW00000000000000000001F /* Beacon.swift */; };
+		LW00000000000000000002B /* BeaconClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000020 /* BeaconClient.swift */; };
+		LW000000000000000000036 /* BeaconClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000020 /* BeaconClient.swift */; };
+		LW00000000000000000002C /* BeaconSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000021 /* BeaconSnapshot.swift */; };
+		LW000000000000000000037 /* BeaconSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000021 /* BeaconSnapshot.swift */; };
+		LW00000000000000000002D /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000022 /* SharedStore.swift */; };
+		LW000000000000000000038 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000022 /* SharedStore.swift */; };
+		LW00000000000000000002E /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000023 /* Strings.swift */; };
+		LW000000000000000000039 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000023 /* Strings.swift */; };
+		LW00000000000000000002F /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000024 /* Palette.swift */; };
+		LW00000000000000000003A /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000024 /* Palette.swift */; };
+		LW000000000000000000030 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000025 /* Components.swift */; };
+		LW00000000000000000003B /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000025 /* Components.swift */; };
+		LW000000000000000000031 /* WidgetLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000026 /* WidgetLayouts.swift */; };
+		LW00000000000000000003C /* WidgetLayouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000026 /* WidgetLayouts.swift */; };
+		LW000000000000000000032 /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000027 /* IPAddress.swift */; };
+		LW00000000000000000003D /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000027 /* IPAddress.swift */; };
+		LW000000000000000000033 /* SampleBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000028 /* SampleBeacon.swift */; };
+		LW00000000000000000003E /* SampleBeacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000028 /* SampleBeacon.swift */; };
+		LW000000000000000000034 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000029 /* Localizable.xcstrings */; };
+		LW00000000000000000003F /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = LW000000000000000000029 /* Localizable.xcstrings */; };
+		LW000000000000000000040 /* LaunchWindowWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = LW000000000000000000008 /* LaunchWindowWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		LW000000000000000000015 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = LW000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = LW000000000000000000006;
+			remoteInfo = LaunchWindowWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		LW000000000000000000010 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				LW000000000000000000040 /* LaunchWindowWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		LW000000000000000000007 /* LaunchWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LaunchWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		LW000000000000000000008 /* LaunchWindowWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LaunchWindowWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		LW00000000000000000001F /* Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		LW000000000000000000020 /* BeaconClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconClient.swift; sourceTree = "<group>"; };
+		LW000000000000000000021 /* BeaconSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconSnapshot.swift; sourceTree = "<group>"; };
+		LW000000000000000000022 /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		LW000000000000000000023 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		LW000000000000000000024 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		LW000000000000000000025 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		LW000000000000000000026 /* WidgetLayouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLayouts.swift; sourceTree = "<group>"; };
+		LW000000000000000000027 /* IPAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddress.swift; sourceTree = "<group>"; };
+		LW000000000000000000028 /* SampleBeacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleBeacon.swift; sourceTree = "<group>"; };
+		LW000000000000000000029 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		LW00000000000000000000B /* Exceptions for "LaunchWindow" folder in "LaunchWindow" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = LW000000000000000000005;
+		};
+		LW00000000000000000000C /* Exceptions for "LaunchWindowWidget" folder in "LaunchWindowWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = LW000000000000000000006;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		LW000000000000000000009 /* LaunchWindow */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				LW00000000000000000000B /* Exceptions */,
+			);
+			path = LaunchWindow;
+			sourceTree = "<group>";
+		};
+		LW00000000000000000000A /* LaunchWindowWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				LW00000000000000000000C /* Exceptions */,
+			);
+			path = LaunchWindowWidget;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		LW00000000000000000000F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LW000000000000000000013 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		LW000000000000000000002 = {
+			isa = PBXGroup;
+			children = (
+				LW000000000000000000004 /* Shared */,
+				LW000000000000000000009 /* LaunchWindow */,
+				LW00000000000000000000A /* LaunchWindowWidget */,
+				LW000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		LW000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				LW000000000000000000007 /* LaunchWindow.app */,
+				LW000000000000000000008 /* LaunchWindowWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		LW000000000000000000004 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				LW00000000000000000001F /* Beacon.swift */,
+				LW000000000000000000020 /* BeaconClient.swift */,
+				LW000000000000000000021 /* BeaconSnapshot.swift */,
+				LW000000000000000000022 /* SharedStore.swift */,
+				LW000000000000000000023 /* Strings.swift */,
+				LW000000000000000000024 /* Palette.swift */,
+				LW000000000000000000025 /* Components.swift */,
+				LW000000000000000000026 /* WidgetLayouts.swift */,
+				LW000000000000000000027 /* IPAddress.swift */,
+				LW000000000000000000028 /* SampleBeacon.swift */,
+				LW000000000000000000029 /* Localizable.xcstrings */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		LW000000000000000000005 /* LaunchWindow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = LW000000000000000000017 /* Build configuration list for PBXNativeTarget "LaunchWindow" */;
+			buildPhases = (
+				LW00000000000000000000D /* Sources */,
+				LW00000000000000000000F /* Frameworks */,
+				LW00000000000000000000E /* Resources */,
+				LW000000000000000000010 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				LW000000000000000000014 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				LW000000000000000000009 /* LaunchWindow */,
+			);
+			name = LaunchWindow;
+			productName = LaunchWindow;
+			productReference = LW000000000000000000007 /* LaunchWindow.app */;
+			productType = "com.apple.product-type.application";
+		};
+		LW000000000000000000006 /* LaunchWindowWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = LW000000000000000000018 /* Build configuration list for PBXNativeTarget "LaunchWindowWidgetExtension" */;
+			buildPhases = (
+				LW000000000000000000011 /* Sources */,
+				LW000000000000000000013 /* Frameworks */,
+				LW000000000000000000012 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				LW00000000000000000000A /* LaunchWindowWidget */,
+			);
+			name = LaunchWindowWidgetExtension;
+			productName = LaunchWindowWidgetExtension;
+			productReference = LW000000000000000000008 /* LaunchWindowWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		LW000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					LW000000000000000000005 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					LW000000000000000000006 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+				};
+			};
+			buildConfigurationList = LW000000000000000000016 /* Build configuration list for PBXProject "LaunchWindow" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				de,
+				Base,
+			);
+			mainGroup = LW000000000000000000002;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = LW000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				LW000000000000000000005 /* LaunchWindow */,
+				LW000000000000000000006 /* LaunchWindowWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		LW00000000000000000000E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LW000000000000000000034 /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LW000000000000000000012 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LW00000000000000000003F /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		LW00000000000000000000D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LW00000000000000000002A /* Beacon.swift in Sources */,
+				LW00000000000000000002B /* BeaconClient.swift in Sources */,
+				LW00000000000000000002C /* BeaconSnapshot.swift in Sources */,
+				LW00000000000000000002D /* SharedStore.swift in Sources */,
+				LW00000000000000000002E /* Strings.swift in Sources */,
+				LW00000000000000000002F /* Palette.swift in Sources */,
+				LW000000000000000000030 /* Components.swift in Sources */,
+				LW000000000000000000031 /* WidgetLayouts.swift in Sources */,
+				LW000000000000000000032 /* IPAddress.swift in Sources */,
+				LW000000000000000000033 /* SampleBeacon.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		LW000000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				LW000000000000000000035 /* Beacon.swift in Sources */,
+				LW000000000000000000036 /* BeaconClient.swift in Sources */,
+				LW000000000000000000037 /* BeaconSnapshot.swift in Sources */,
+				LW000000000000000000038 /* SharedStore.swift in Sources */,
+				LW000000000000000000039 /* Strings.swift in Sources */,
+				LW00000000000000000003A /* Palette.swift in Sources */,
+				LW00000000000000000003B /* Components.swift in Sources */,
+				LW00000000000000000003C /* WidgetLayouts.swift in Sources */,
+				LW00000000000000000003D /* IPAddress.swift in Sources */,
+				LW00000000000000000003E /* SampleBeacon.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		LW000000000000000000014 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = LW000000000000000000006 /* LaunchWindowWidgetExtension */;
+			targetProxy = LW000000000000000000015 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		LW000000000000000000019 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		LW00000000000000000001A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		LW00000000000000000001B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LaunchWindow/LaunchWindow.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = LaunchWindow/LaunchWindow-macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LaunchWindow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Launch Window";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Carsten Knoblich. GPL-3.0.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.staticline.LaunchWindow;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		LW00000000000000000001C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LaunchWindow/LaunchWindow.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = LaunchWindow/LaunchWindow-macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LaunchWindow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Launch Window";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Carsten Knoblich. GPL-3.0.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.staticline.LaunchWindow;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		LW00000000000000000001D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = LaunchWindowWidget/LaunchWindowWidget.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = LaunchWindowWidget/LaunchWindowWidget-macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LaunchWindowWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Launch Window";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Carsten Knoblich. GPL-3.0.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.staticline.LaunchWindow.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		LW00000000000000000001E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = LaunchWindowWidget/LaunchWindowWidget.entitlements;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = LaunchWindowWidget/LaunchWindowWidget-macOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ABCDE12345;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LaunchWindowWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Launch Window";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Carsten Knoblich. GPL-3.0.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = de.staticline.LaunchWindow.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		LW000000000000000000016 /* Build configuration list for PBXProject "LaunchWindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				LW000000000000000000019 /* Debug */,
+				LW00000000000000000001A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		LW000000000000000000017 /* Build configuration list for PBXNativeTarget "LaunchWindow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				LW00000000000000000001B /* Debug */,
+				LW00000000000000000001C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		LW000000000000000000018 /* Build configuration list for PBXNativeTarget "LaunchWindowWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				LW00000000000000000001D /* Debug */,
+				LW00000000000000000001E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = LW000000000000000000001 /* Project object */;
+}
