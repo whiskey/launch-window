@@ -214,6 +214,25 @@ on the board, the board answers `/api/v1/beacon` with a 500 on every long night.
 `tools/smoke-test.py` now builds a December document, so its next run on the board says whether
 the fix holds there.
 
+**Known issue: for about two hours each morning the beacon mixes two nights.** `sky.night()`
+looks twelve hours back and takes each boundary — sunset, nautical dusk, astronomical dusk — as
+the first one in that window, each on its own. Twelve hours after last night's sunset the sunset
+is already tonight's, while both dusks are still last night's until twelve hours have passed
+since each of them too. In Berlin in late October that is from about 06:00 to 07:50: the page
+shows tonight's sunset beside last night's dusk and dawn, and no sunrise. From about 07:15 a
+forecast fetched from the nautical boundaries already covers tonight, while the grading, from
+the astronomical ones, still looks at last night — and the verdict is `unknown`, "no forecast
+covering tonight's dark hours". It rights itself when the last boundary rolls over.
+The fix is to take every boundary from one night, and to time the forecast refresh to the moment
+that night changes so the gap does not just move. It has not been made: `night()` exists twice,
+here and in `app/Shared/SkyMath.swift`, which `app/tools/compare-sky.py` holds to this one, and
+neither the extra astronomy nor its cost on the board could be checked without the board.
+
+## Status
+
+Parked in October 2026. The beacon does what this README describes, with the two exceptions
+directly above.
+
 ## Layout
 
 | Path | What it holds |
