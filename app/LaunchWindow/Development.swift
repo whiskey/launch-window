@@ -393,6 +393,7 @@ enum Development {
             ("unknown", SampleBeacon.snapshot(SampleBeacon.unknown), .day),
             ("night", SampleBeacon.snapshot(SampleBeacon.noGo), .night),
             ("replayed", replayed, .day),
+            ("answered", answered, .day),
             ("unreachable", unreachable, .day),
         ]
     }
@@ -419,6 +420,18 @@ enum Development {
                        host: SharedStore.defaultHost,
                        failure: .unreachable(String(localized: "error.dns",
                                                     defaultValue: "the name does not resolve")),
+                       origin: .cache)
+    }
+
+    /// A good night, shown after the beacon answered with an error instead of a
+    /// reading — the way it failed on the long nights of October 2026, while
+    /// its page and `/health` went on answering.
+    private static var answered: BeaconSnapshot {
+        BeaconSnapshot(document: SampleBeacon.go,
+                       retrievedAt: Date().addingTimeInterval(-9000),
+                       host: SharedStore.defaultHost,
+                       failure: .httpStatus(code: 500,
+                                            body: "handler failed: memory allocation failed, allocating 4096 bytes"),
                        origin: .cache)
     }
 

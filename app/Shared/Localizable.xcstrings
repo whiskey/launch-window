@@ -50,6 +50,23 @@
         }
       }
     },
+    "banner.answeredWithoutReading" : {
+      "comment" : "The beacon is on the network but answered with an error; the app or widget is showing its cache",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Beacon antwortete, lieferte aber keine Messung. Angezeigt wird die letzte von vor %1$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The beacon answered but sent no reading. Showing the last one, from %1$@ ago."
+          }
+        }
+      }
+    },
     "banner.clockUnsynced" : {
       "localizations" : {
         "de" : {

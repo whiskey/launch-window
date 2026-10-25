@@ -306,6 +306,12 @@ enum Strings {
                comment: "The app or widget could not reach the beacon and is showing its cache")
     }
 
+    static func answeredWithoutReading(age: String) -> String {
+        String(localized: "banner.answeredWithoutReading",
+               defaultValue: "The beacon answered but sent no reading. Showing the last one, from \(age) ago.",
+               comment: "The beacon is on the network but answered with an error; the app or widget is showing its cache")
+    }
+
     static func readAt(time: String) -> String {
         String(localized: "label.readAt", defaultValue: "read \(time)",
                comment: "When this client last got an answer, e.g. 'read 22:14'")

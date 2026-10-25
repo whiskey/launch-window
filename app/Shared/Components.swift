@@ -336,17 +336,28 @@ struct StatusBanner: View {
     var snapshot: BeaconSnapshot
     var palette: Palette
     var size: CGFloat = 11
+    /// Adds what the last attempt actually ran into under a replayed reading.
+    /// The app has room for it; a widget does not.
+    var showsFailure: Bool = false
 
     var body: some View {
         if let notice {
             HStack(spacing: 4) {
                 Image(systemName: notice.symbol)
                     .font(.system(size: size * 0.95, weight: .semibold))
-                Text(notice.text)
-                    .font(.system(size: size, weight: .medium))
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.75)
-                    .multilineTextAlignment(.leading)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(notice.text)
+                        .font(.system(size: size, weight: .medium))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.75)
+                        .multilineTextAlignment(.leading)
+                    if let detail = notice.detail {
+                        Text(detail)
+                            .font(.system(size: size * 0.9))
+                            .lineLimit(3)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
                 Spacer(minLength: 0)
             }
             .foregroundStyle(notice.tint)
@@ -364,6 +375,7 @@ struct StatusBanner: View {
         var symbol: String
         var text: String
         var tint: Color
+        var detail: String? = nil
     }
 
     private var notice: Notice? {
@@ -371,9 +383,17 @@ struct StatusBanner: View {
 
         if snapshot.isReplayed {
             let age = snapshot.age().map(Age.compact) ?? Strings.neverRead
+            let detail = showsFailure ? snapshot.failure?.message : nil
+            if snapshot.failure?.beaconAnswered == true {
+                return Notice(symbol: "exclamationmark.triangle",
+                              text: Strings.answeredWithoutReading(age: age),
+                              tint: palette.verdict(.unknown),
+                              detail: detail)
+            }
             return Notice(symbol: "antenna.radiowaves.left.and.right.slash",
                           text: Strings.lastKnown(age: age),
-                          tint: palette.verdict(.unknown))
+                          tint: palette.verdict(.unknown),
+                          detail: detail)
         }
         if document.data.stale {
             if let seconds = document.data.ageSeconds {

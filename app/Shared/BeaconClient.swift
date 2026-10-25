@@ -45,6 +45,16 @@ enum BeaconError: Error, Hashable, Sendable {
         }
     }
 
+    /// True when the beacon itself answered: it is on the network, and the
+    /// fault is in what it sent rather than in getting there. Calling that
+    /// "unreachable" sends its owner off to debug the WiFi instead of the board.
+    var beaconAnswered: Bool {
+        switch self {
+        case .httpStatus, .malformed, .unsupportedSchema: return true
+        case .badHost, .unreachable: return false
+        }
+    }
+
     /// True when retrying later might plausibly work, which is what decides
     /// whether the widget schedules a short or a long retry.
     var isTransient: Bool {

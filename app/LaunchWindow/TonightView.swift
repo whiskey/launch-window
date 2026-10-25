@@ -96,7 +96,7 @@ struct TonightView: View {
 
     @ViewBuilder
     private var banner: some View {
-        StatusBanner(snapshot: model.snapshot, palette: palette, size: 12)
+        StatusBanner(snapshot: model.snapshot, palette: palette, size: 12, showsFailure: true)
     }
 
     @ViewBuilder

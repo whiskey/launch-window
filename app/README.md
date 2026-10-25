@@ -31,6 +31,14 @@ all, in which case it shows the last document it managed to read, labelled with
 how old it is and marked with a struck-through aerial. Neither is ever silently
 passed off as fresh.
 
+A beacon that answers with an error is not an unreachable one, and the banner
+does not say it is. The fault is in the board rather than on the way to it, and
+the remedy is different, so that case gets its own banner. Under either banner,
+the app prints what the last attempt actually ran into — for a beacon out of
+memory, its own one-line reason: `The beacon answered 500: handler failed:
+memory allocation failed, allocating 4096 bytes`. The widgets have no room for
+that line and show the banner alone.
+
 **Nulls are honest.** `unknown` is drawn as its own state, never as `no-go`:
 one says the sky is bad, the other says the beacon has no forecast. An hour
 whose cloud cover came back null is drawn as a dashed outline rather than as a
