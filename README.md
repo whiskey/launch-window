@@ -149,7 +149,7 @@ the one that makes it draw `unknown` and `no-go` as different answers.
 ## Working on it
 
 ```
-tests/run.py                  the host suite — 166 tests, nothing to install
+tests/run.py                  the host suite — 180 tests, nothing to install
 tools/simulate.py             run the firmware on your laptop against tonight's real forecast
 tools/simulate.py --serve     ... and serve the actual status page at localhost:8080
 tools/deploy.py               push changed files to the board and restart it
@@ -181,10 +181,16 @@ still passed. `tools/verify-device.py` exists to catch exactly this, and now rep
 agreeing with the host to 0.002 degrees and one second.
 
 **The heap fragments.** After importing eleven modules the board reports 80 kB free but cannot
-allocate 4 kB contiguously. So the status page is streamed as fragments of at most a kilobyte,
-and `deploy.py` strips docstrings on the way to flash — MicroPython keeps them in RAM for as
-long as a module is imported, and this project's documentation costs more heap than the board
-can spare. The documentation stays here, where it is read.
+allocate 4 kB contiguously. So the status page and the API document are both streamed in pieces
+of at most a kilobyte, and `deploy.py` strips docstrings on the way to flash — MicroPython keeps
+them in RAM for as long as a module is imported, and this project's documentation costs more
+heap than the board can spare. The documentation stays here, where it is read.
+
+The API was not streamed at first. It serialised the document with a single `json.dumps`, which
+fit while the summer nights were short. By late October 2026 a night had eleven graded hours and
+the document had grown to 5.1 kB, and `/api/v1/beacon` answered every request with
+`500 handler failed: memory allocation failed`, while the page and `/api/v1/health` carried on.
+The beacon looked reachable and the app looked broken.
 
 ## What has been verified, and what has not
 
@@ -198,6 +204,15 @@ cannot open a TCP connection to its own access point, and testing it needs a sec
 accept path is covered on the host in `tests/test_server.py` and the socket binds on the board
 — but the first phone to join the setup network will be the first real client this code has
 ever had. That is a thirty-second test, and it is step 2 above.
+
+**Not yet verified on the hardware: the API streamed in pieces.** The fix described under *The
+heap fragments* is covered on the host — `tests/test_server.py` and `tests/test_state.py` check
+that documents past 4 kB, a December night among them, go out byte-for-byte as `json.dumps` would
+write them, in pieces of at most a kilobyte, and the simulator serves tonight's real one — but it
+was written while the board was not connected to a computer. Until `tools/deploy.py` has put it
+on the board, the board answers `/api/v1/beacon` with a 500 on every long night.
+`tools/smoke-test.py` now builds a December document, so its next run on the board says whether
+the fix holds there.
 
 ## Layout
 

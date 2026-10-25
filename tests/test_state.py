@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.join(ROOT, "firmware", "lib"))
 sys.path.insert(0, os.path.join(ROOT, "tests"))
 
 import schema_check  # noqa: E402
+import server as server_mod  # noqa: E402
 import state as state_mod  # noqa: E402
 import store  # noqa: E402
 import verdict  # noqa: E402
@@ -29,6 +30,7 @@ with open(os.path.join(ROOT, "protocol", "beacon-v1.schema.json")) as handle:
     SCHEMA = json.load(handle)
 
 NOW = 1786917600  # 2026-08-16 22:00 UTC, inside the night
+WINTER = 1797890400  # 2026-12-21 22:00 UTC, the longest night of the year
 UNSET_CLOCK = 1609459200  # what the board believes at power-up
 
 CONFIG = {
@@ -128,6 +130,25 @@ class TestDocumentShape(BeaconTestCase):
         """It is serialised on a board with no room to discover this at runtime."""
         document = self.beacon(clear_night(NOW - 3600)).document(NOW)
         self.assertIsInstance(json.dumps(document), str)
+
+    def test_a_long_night_is_served_in_pieces_the_board_can_allocate(self):
+        """A winter night grades a dozen hours or more, and its document passes 4 kB.
+
+        The board cannot allocate 4 kB in one piece. While the API serialised
+        the document as one string, every long night ended in a 500 from
+        `/api/v1/beacon` — and the streamed page went on working, which made the
+        beacon look reachable and the app look broken.
+        """
+        beacon = self.beacon(clear_night(WINTER - 7 * 3600, count=16), fetched_at=WINTER - 600)
+        document = beacon.document(WINTER)
+        encoded = json.dumps(document)
+        self.assertGreater(len(document["verdict"]["hours"]), 12)
+        self.assertGreater(len(encoded), 4096)
+
+        _, _, body = server_mod.json_response(document)
+        pieces = [body] if isinstance(body, str) else list(body)
+        self.assertEqual("".join(pieces), encoded)
+        self.assertLessEqual(max(len(piece) for piece in pieces), 1024)
 
     def test_local_times_accompany_every_utc_time(self):
         document = self.beacon(clear_night(NOW - 3600)).document(NOW)

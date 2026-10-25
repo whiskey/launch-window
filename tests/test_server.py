@@ -142,6 +142,30 @@ class TestRouting(unittest.TestCase):
         serve({"/": handler}, request_bytes(target="/?theme=day"))
         self.assertEqual(seen, {"theme": "day"})
 
+    def test_json_is_streamed_in_small_pieces(self):
+        """The same bytes `json.dumps` would produce, never more than 1 kB at a time."""
+        data = {
+            "hours": [
+                {"local": "%02d:00" % index, "score": index * 1.5, "veto": None,
+                 "usable": index % 2 == 0, "note": "Wolken überall", "pair": [index, None]}
+                for index in range(60)
+            ],
+            "empty": {},
+            "none": [],
+        }
+        encoded = json.dumps(data)
+        self.assertGreater(len(encoded), 4096)
+
+        _, content_type, body = server_mod.json_response(data)
+        pieces = [body] if isinstance(body, str) else list(body)
+        self.assertIn("application/json", content_type)
+        self.assertEqual("".join(pieces), encoded)
+        self.assertLessEqual(max(len(piece) for piece in pieces), 1024)
+
+        routes = {"/x": lambda r: server_mod.json_response(data)}
+        _, sent = split(serve(routes, request_bytes(target="/x")))
+        self.assertEqual(json.loads(sent), data)
+
     def test_iterable_body_is_streamed(self):
         routes = {"/": lambda r: (200, "text/html", (c for c in ["a", "b", "c"]))}
         _, body = split(serve(routes, request_bytes()))

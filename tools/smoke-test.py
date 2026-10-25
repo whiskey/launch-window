@@ -115,6 +115,36 @@ check('page renders', first.startswith('<!doctype html>') and last.rstrip().ends
 check('page has no None', not leaked_none)
 check('page fragments stay small', biggest < 1200, 'largest fragment %d bytes' % biggest)
 
+# -- json, consumed the way the server consumes it ---------------------
+# A winter night grades a dozen hours or more and takes the document past 4 kB,
+# which `json.dumps` cannot get in one piece once the heap has been in use for a
+# while. The API streams it like the page; the pieces must stay small.
+WINTER = 1797890400  # 2026-12-21 22:00 UTC
+long_night = sky.night(WINTER, 52.52, 13.40)
+winter = state.Beacon(CONFIG, wifi=None, boot_ts=WINTER-3600)
+winter.hours = []
+for i in range(16):
+    winter.hours.append({'ts': long_night['dusk_astronomical'] - 3600 + i*3600,
+                         'cloud_cover': 5, 'cloud_cover_low': 0, 'cloud_cover_mid': 0,
+                         'cloud_cover_high': 5, 'temperature_2m': 2.0, 'dew_point_2m': -4.0,
+                         'wind_gusts_10m': 7.0, 'precipitation_probability': 0})
+winter.fetched_at = WINTER - 600
+winter_doc = winter.document(WINTER)
+total = biggest = 0
+opened = closed = False
+body = server.json_response(winter_doc)[2]
+for piece in ((body,) if isinstance(body, str) else body):
+    if total == 0:
+        opened = piece.startswith('{')
+    total += len(piece)
+    if len(piece) > biggest:
+        biggest = len(piece)
+    closed = piece.endswith('}')
+check('long night outgrows one piece', total > 4096,
+      '%d hours, %d bytes json' % (len(winter_doc['verdict']['hours']), total))
+check('json pieces stay small', biggest < 1200 and opened and closed,
+      'largest piece %d bytes' % biggest)
+
 # -- led ---------------------------------------------------------------
 lamp = led.Led()
 lamp.set(doc['verdict']['state'])
@@ -154,7 +184,7 @@ class W:
     def size(self): return sum(len(p) for p in self.parts)
 
 routes = {'/': lambda rq: (200, 'text/html; charset=utf-8', page.render(doc)),
-          '/api/v1/beacon': lambda rq: server.json_response(doc),
+          '/api/v1/beacon': lambda rq: server.json_response(winter_doc),
           '/api/v1/health': lambda rq: server.json_response({'ok': True, 'schema': 1})}
 srv = server.Server(routes)
 w = W()
@@ -163,7 +193,8 @@ check('http serves the page', w.contains(b'200 OK') and w.contains(b'<!doctype h
       '%d bytes' % w.size())
 w = W()
 asyncio.run(srv.handle(R(b'GET /api/v1/beacon HTTP/1.1\r\nHost: x\r\n\r\n'), w))
-check('http serves json', w.contains(b'application/json') and w.contains(b'"schema"'))
+check('http serves json', w.contains(b'200 OK') and w.contains(b'application/json')
+      and w.contains(b'"schema"'), '%d bytes' % w.size())
 w = W()
 asyncio.run(srv.handle(R(b'GET /nope HTTP/1.1\r\nHost: x\r\n\r\n'), w))
 check('http 404s', w.contains(b'404'))

@@ -36,6 +36,12 @@ ignore unknown ones. Removing or retyping a field requires `/api/v2`.
 
 The full document. See the schema; an example follows.
 
+The body is streamed in pieces and carries no `Content-Length`; like every response from the
+beacon, it ends when the connection closes (`Connection: close`). A failure that happens before
+the first byte is a `500` with a one-line `text/plain` reason. A failure partway through can
+only end the stream, so a client must treat a body that does not parse as a failed read, never
+as a document.
+
 ### `GET /api/v1/health`
 
 Cheap liveness check that computes nothing. `{"ok": true, "schema": 1}`.

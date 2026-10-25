@@ -13,7 +13,7 @@ that actually occur on a microcontroller:
   it dies.
 - **Handlers may return an iterable.** The status page is assembled from
   fragments and streamed, so rendering it never needs the whole document in
-  heap at once.
+  heap at once. JSON goes out the same way, for the same reason.
 - **A handler that raises returns 500 and keeps the server alive.** A status
   beacon that stops answering because one request went wrong has failed at its
   only job.
@@ -24,6 +24,7 @@ import json
 READ_TIMEOUT = 8
 MAX_BODY = 2048
 MAX_LINE = 512
+JSON_CHUNK = 512
 
 STATUS_TEXT = {
     200: "OK",
@@ -88,8 +89,56 @@ def parse_qs(query):
     return result
 
 
+def json_chunks(data, size=JSON_CHUNK):
+    """`json.dumps(data)`, byte for byte, in pieces of about `size` characters.
+
+    `json.dumps` builds its result as one string, and that string has to fit a
+    single contiguous block. On this board's fragmented heap that block is
+    under 4 kB, and the beacon document outgrows it on any long night: eleven
+    graded hours make 5 kB. So containers are walked here and only scalars are
+    handed to `json.dumps`, which keeps every allocation small. The separators
+    are the ones `json.dumps` uses, so a client cannot tell the difference.
+    """
+    parts = []
+    length = 0
+    for token in _json_tokens(data):
+        parts.append(token)
+        length += len(token)
+        if length >= size:
+            yield "".join(parts)
+            parts = []
+            length = 0
+    if parts:
+        yield "".join(parts)
+
+
+def _json_tokens(data):
+    if isinstance(data, dict):
+        yield "{"
+        first = True
+        for key, value in data.items():
+            if not first:
+                yield ", "
+            first = False
+            yield json.dumps(key)
+            yield ": "
+            yield from _json_tokens(value)
+        yield "}"
+    elif isinstance(data, (list, tuple)):
+        yield "["
+        first = True
+        for value in data:
+            if not first:
+                yield ", "
+            first = False
+            yield from _json_tokens(value)
+        yield "]"
+    else:
+        yield json.dumps(data)
+
+
 def json_response(data, status=200):
-    return status, "application/json; charset=utf-8", json.dumps(data)
+    return status, "application/json; charset=utf-8", json_chunks(data)
 
 
 def html_response(body, status=200):
